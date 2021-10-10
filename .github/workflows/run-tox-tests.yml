@@ -1,0 +1,71 @@
+name: Run Tox tests
+
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
+        exclude:
+          - os: windows-latest
+            python-version: pypy3
+    name: Test on Python ${{ matrix.python-version }} (${{ matrix.os }})
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Install dependencies 🔧
+        run: |
+          pip install -U pip
+          pip install tox tox-gh-actions 'coveralls<3.0.0'
+      - name: Test project with tox
+        run: |
+          tox
+      - name: Send coverage to coveralls
+        run: |
+          coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: py-${{ matrix.python-version }}-${{ matrix.os }}
+
+  test_on_aarch64:
+    name: Build and test on ARM64
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 20
+      - uses: uraimo/run-on-arch-action@v2.0.9
+        name: Build & run test
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y python3 python3-pip python3-cffi build-essential gcc git libffi-dev
+          run: |
+            python3 -c "import platform;print('Machine type:', platform.machine())"
+            python3 -m pip install -U pip tox
+            python3 -m tox -e py38
+
+  finish:
+    runs-on: ubuntu-latest
+    name: finish parallel build
+    needs: [build, test_on_aarch64]
+    steps:
+      - name: Tell Coveralls that the parallel build is finished
+        run: |
+          curl -k \
+              https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN \
+              -d "payload[build_num]=$GITHUB_SHA&payload[status]=done"
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
