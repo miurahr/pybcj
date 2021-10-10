@@ -28,11 +28,6 @@ enum Method {
     ia64
 };
 
-typedef struct buffer_s {
-    Byte *buf;
-    SizeT size;
-} buffer;
-
 typedef struct {
     PyObject_HEAD
 
@@ -49,9 +44,10 @@ typedef struct {
     /* __init__ has been called, 0 or 1. */
     char inited;
 
-    Byte *input_buffer;
-    size_t input_buffer_size;
-    size_t in_begin, in_end;
+    /* work buffer */
+    Byte *buffer;
+    SizeT buf_size;
+    SizeT buf_pos;
 } BCJFilter;
 
 static PyObject *
@@ -85,31 +81,34 @@ BCJFilter_dealloc(BCJFilter *self) {
 }
 
 static SizeT
-BCJFilter_do_method(BCJFilter *self, buffer *in) {
+BCJFilter_do_method(BCJFilter *self) {
     SizeT out_len;
 
-    if (in->size == 0) {
+    if (self->buf_size == self->buf_pos) {
         return 0;
     }
 
+    Byte* buf = self->buffer + self->buf_pos;
+    SizeT size = self->buf_size - self->buf_pos;
+
     switch (self->method) {
         case x86:
-            out_len = x86_Convert(in->buf, in->size, self->ip, &self->state, self->is_encoder);
+            out_len = x86_Convert(buf, size, self->ip, &self->state, self->is_encoder);
             break;
         case arm:
-            out_len = ARM_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            out_len = ARM_Convert(buf, size, self->ip, self->is_encoder);
             break;
         case armt:
-            out_len = ARMT_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            out_len = ARMT_Convert(buf, size, self->ip, self->is_encoder);
             break;
         case ppc:
-            out_len = PPC_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            out_len = PPC_Convert(buf, size, self->ip, self->is_encoder);
             break;
         case sparc:
-            out_len = SPARC_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            out_len = SPARC_Convert(buf, size, self->ip, self->is_encoder);
             break;
         case ia64:
-            out_len = IA64_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            out_len = IA64_Convert(buf, size, self->ip, self->is_encoder);
             break;
         default:
             // should not come here.
@@ -122,72 +121,61 @@ BCJFilter_do_method(BCJFilter *self, buffer *in) {
 
 static PyObject *
 BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
-    buffer in;
 
     ACQUIRE_LOCK(self);
 
-    if (self->in_begin == self->in_end) {
+    if (self->buf_pos == self->buf_size) {
         Byte* tmp = PyMem_Malloc(data->len);
         if (tmp == NULL) {
             PyErr_NoMemory();
             goto error;
         }
         memcpy(tmp, data->buf, data->len);
-        self->input_buffer = tmp;
-        self->input_buffer_size = data->len;
-        in.buf = tmp;
-        in.size = data->len;
-        self->in_begin = 0;
-        self->in_end = in.size;
-    } else if (data->len == 0) {
-        in.buf = self->input_buffer + self->in_begin;
-        in.size = self->in_end - self->in_begin;
-    } else {
-        size_t usenow = self->in_end - self->in_begin;
+        self->buffer = tmp;
+        self->buf_size = data->len;
+        self->buf_pos = 0;
+    } else if (data->len > 0) {
+        size_t usenow = self->buf_size - self->buf_pos;
         Byte *tmp;
         tmp = PyMem_Malloc(data->len + usenow);
         if (tmp == NULL) {
             PyErr_NoMemory();
             goto error;
         }
-        memcpy(tmp, self->input_buffer + self->in_begin, usenow);
-        PyMem_Free(self->input_buffer);
+        memcpy(tmp, self->buffer + self->buf_pos, usenow);
+        PyMem_Free(self->buffer);
         memcpy(tmp + usenow, data->buf, data->len);
-        self->input_buffer = tmp;
-        in.buf = self->input_buffer;
-        in.size = usenow;
-        self->in_begin = 0;
-        self->in_end = usenow;
+        self->buffer = tmp;
+        self->buf_size = usenow;
+        self->buf_pos = 0;
     }
 
-    SizeT out_len = BCJFilter_do_method(self, &in);
+    SizeT out_len = BCJFilter_do_method(self);
     if (self->size <= self->readahead) {
         // flush all the data
-        out_len = in.size;
+        out_len = self->buf_size;
     }
 
     PyObject *result = PyBytes_FromStringAndSize(NULL, out_len);
     if (result == NULL) {
-        if (self->input_buffer != NULL) {
-            PyMem_Free(self->input_buffer);
+        if (self->buffer != NULL) {
+            PyMem_Free(self->buffer);
         }
         PyErr_NoMemory();
         goto error;
     }
     char *posi = PyBytes_AS_STRING(result);
-    memcpy(posi, (const char*)in.buf, out_len);
+    memcpy(posi, (const char*)(self->buffer + self->buf_pos), out_len);
 
     /* unconsumed input data */
-    if (out_len == in.size) {
+    if (out_len == self->buf_size - self->buf_pos) {
         // finished; release buffer
-        PyMem_Free(self->input_buffer);
-        self->in_begin = 0;
-        self->in_end = 0;
-        self->input_buffer = NULL;
-        self->input_buffer_size = 0;
+        PyMem_Free(self->buffer);
+        self->buf_pos = 0;
+        self->buf_size = 0;
     } else {
         /* keep unconsumed data position */
-        self->in_begin += out_len;
+        self->buf_pos += out_len;
     }
     RELEASE_LOCK(self);
     return result;
@@ -200,28 +188,25 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
 
 static PyObject *
 BCJFilter_do_flush(BCJFilter *self) {
-    buffer in;
     PyObject *result;
 
     ACQUIRE_LOCK(self);
-    if (self->in_begin == self->in_end) {
+    if (self->buf_pos == self->buf_size) {
         result = PyBytes_FromStringAndSize(NULL, 0);
     } else {
-        in.buf = self->input_buffer + self->in_begin;
-        in.size = self->in_end - self->in_begin;
-        SizeT out_len = BCJFilter_do_method(self, &in);
-        out_len = in.size;
-
+        SizeT out_len = BCJFilter_do_method(self);
+        // override with all remaining data
+        out_len = self->buf_size - self->buf_pos;
         result = PyBytes_FromStringAndSize(NULL, out_len);
         if (result == NULL) {
-            if (self->input_buffer != NULL) {
-                PyMem_Free(self->input_buffer);
+            if (self->buffer != NULL) {
+                PyMem_Free(self->buffer);
             }
             PyErr_NoMemory();
             goto error;
         }
         char *posi = PyBytes_AS_STRING(result);
-        memcpy(posi, (const char *) in.buf, out_len);
+        memcpy(posi, (const char *) self->buffer + self->buf_pos, out_len);
     }
     RELEASE_LOCK(self);
     return result;
