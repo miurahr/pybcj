@@ -6,7 +6,7 @@ except ImportError:
     from importlib_metadata import version  # type: ignore
 
 from .c.c_bcj import (ARMDecoder, ARMEncoder, ARMTDecoder, ARMTEncoder,
-                      BCJDecoder, BCJEncoder)
+                      BCJDecoder, BCJEncoder, PPCDecoder, PPCEncoder)
 
 __all__ = (
     ARMDecoder,
