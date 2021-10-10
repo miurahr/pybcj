@@ -5,14 +5,8 @@ except ImportError:
     from importlib_metadata import PackageNotFoundError  # type: ignore
     from importlib_metadata import version  # type: ignore
 
-from .c.c_bcj import (
-    ARMDecoder,
-    ARMEncoder,
-    ARMTDecoder,
-    ARMTEncoder,
-    BCJDecoder,
-    BCJEncoder
-)
+from .c.c_bcj import (ARMDecoder, ARMEncoder, ARMTDecoder, ARMTEncoder,
+                      BCJDecoder, BCJEncoder)
 
 __all__ = (
     ARMDecoder,
