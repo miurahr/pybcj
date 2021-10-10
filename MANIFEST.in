@@ -10,3 +10,4 @@ recursive-include src *.pyi
 recursive-include src py.typed
 recursive-include tests *.py
 recursive-include tests *.bin
+recursive-include tests *.so.0
