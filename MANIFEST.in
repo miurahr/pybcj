@@ -1,11 +1,11 @@
 include *.rst
-include *.toml
-include *.yml
+include pyproject.toml
 include LICENSE
-include tox.ini
+include CMakeLists.txt
+recursive-include lib *.h
+recursive-include lib *.c
 recursive-include src *.py
 recursive-include src *.c
-recursive-include src *.h
 recursive-include src *.pyi
 recursive-include src py.typed
 recursive-include tests *.py
