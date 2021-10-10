@@ -84,6 +84,42 @@ BCJFilter_dealloc(BCJFilter *self) {
     Py_DECREF(tp);
 }
 
+static SizeT
+BCJFilter_do_method(BCJFilter *self, buffer *in) {
+    SizeT out_len;
+
+    if (in->size == 0) {
+        return 0;
+    }
+
+    switch (self->method) {
+        case x86:
+            out_len = x86_Convert(in->buf, in->size, self->ip, &self->state, self->is_encoder);
+            break;
+        case arm:
+            out_len = ARM_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            break;
+        case armt:
+            out_len = ARMT_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            break;
+        case ppc:
+            out_len = PPC_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            break;
+        case sparc:
+            out_len = SPARC_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            break;
+        case ia64:
+            out_len = IA64_Convert(in->buf, in->size, self->ip, self->is_encoder);
+            break;
+        default:
+            // should not come here.
+            return 0;
+    }
+    self->ip += out_len;
+    self->size -= out_len;
+    return out_len;
+}
+
 static PyObject *
 BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
     buffer in;
@@ -97,8 +133,12 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
             goto error;
         }
         memcpy(tmp, data->buf, data->len);
+        self->input_buffer = tmp;
+        self->input_buffer_size = data->len;
         in.buf = tmp;
         in.size = data->len;
+        self->in_begin = 0;
+        self->in_end = in.size;
     } else if (data->len == 0) {
         in.buf = self->input_buffer + self->in_begin;
         in.size = self->in_end - self->in_begin;
@@ -116,38 +156,12 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
         self->input_buffer = tmp;
         in.buf = self->input_buffer;
         in.size = usenow;
+        self->in_begin = 0;
+        self->in_end = usenow;
     }
 
-    SizeT out_len;
-    switch (self->method) {
-        case x86:
-            out_len = x86_Convert(in.buf, in.size, self->ip, &self->state, self->is_encoder);
-            break;
-        case arm:
-            out_len = ARM_Convert(in.buf, in.size, self->ip, self->is_encoder);
-            break;
-        case armt:
-            out_len = ARMT_Convert(in.buf, in.size, self->ip, self->is_encoder);
-            break;
-        case ppc:
-            out_len = PPC_Convert(in.buf, in.size, self->ip, self->is_encoder);
-            break;
-        case sparc:
-            out_len = SPARC_Convert(in.buf, in.size, self->ip, self->is_encoder);
-            break;
-        case ia64:
-            out_len = IA64_Convert(in.buf, in.size, self->ip, self->is_encoder);
-            break;
-        default:
-            // should not come here.
-            goto error;
-    }
-    self->ip += out_len;
-    self->size -= out_len;
-
+    SizeT out_len = BCJFilter_do_method(self, &in);
     if (self->size <= self->readahead) {
-        // processed all the data
-        assert(in.size == out_len + self->size);
         // flush all the data
         out_len = in.size;
     }
@@ -184,6 +198,39 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
 
 }
 
+static PyObject *
+BCJFilter_do_flush(BCJFilter *self) {
+    buffer in;
+    PyObject *result;
+
+    ACQUIRE_LOCK(self);
+    if (self->in_begin == self->in_end) {
+        result = PyBytes_FromStringAndSize(NULL, 0);
+    } else {
+        in.buf = self->input_buffer + self->in_begin;
+        in.size = self->in_end - self->in_begin;
+        SizeT out_len = BCJFilter_do_method(self, &in);
+        out_len = in.size;
+
+        result = PyBytes_FromStringAndSize(NULL, out_len);
+        if (result == NULL) {
+            if (self->input_buffer != NULL) {
+                PyMem_Free(self->input_buffer);
+            }
+            PyErr_NoMemory();
+            goto error;
+        }
+        char *posi = PyBytes_AS_STRING(result);
+        memcpy(posi, (const char *) in.buf, out_len);
+    }
+    RELEASE_LOCK(self);
+    return result;
+
+    error:
+    RELEASE_LOCK(self);
+    return NULL;
+}
+
 static int
 BCJEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     /* Only called once */
@@ -195,6 +242,7 @@ BCJEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = x86;
     self->readahead = 5;
     self->is_encoder = True;
+    self->size = INT_MAX;
     return 0;
 
     error:
@@ -216,6 +264,15 @@ BCJEncoder_encode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     PyObject* result = BCJFilter_do_filter(self, &data);
     PyBuffer_Release(&data);
+    return result;
+}
+
+PyDoc_STRVAR(BCJEncoder_flush_doc,
+"");
+
+static PyObject *
+BCJEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    PyObject* result = BCJFilter_do_flush(self);
     return result;
 }
 
@@ -281,6 +338,8 @@ reduce_cannot_pickle(PyObject *self) {
 static PyMethodDef BCJEncoder_methods[] = {
         {"encode",     (PyCFunction) BCJEncoder_encode,
                              METH_VARARGS | METH_KEYWORDS, BCJEncoder_encode_doc},
+        {"flush",     (PyCFunction) BCJEncoder_flush,
+                METH_VARARGS | METH_KEYWORDS, BCJEncoder_flush_doc},
         {"__reduce__", (PyCFunction) reduce_cannot_pickle,
                              METH_NOARGS,                  reduce_cannot_pickle_doc},
         {NULL,         NULL, 0,                            NULL}
