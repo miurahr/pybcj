@@ -419,6 +419,102 @@ ARMDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 }
 
 /*
+ * ARMT Encoder.
+ */
+static int
+ARMTEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = armt;
+    self->readAhead = 5;
+    self->isEncoder = True;
+    self->remiaining = INT_MAX;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(ARMTEncoder_encode_doc,
+"");
+
+static PyObject *
+ARMTEncoder_encode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:ARMTEncoder.encode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+PyDoc_STRVAR(ARMTEncoder_flush_doc,
+"");
+
+static PyObject *
+ARMTEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    PyObject* result = BCJFilter_do_flush(self);
+    return result;
+}
+
+/*
+ * ARMT Decoder.
+ */
+static int
+ARMTDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"size", NULL};
+    int size;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "i:ARMTDecoder.__init__", kwlist,
+                                     &size)) {
+        return -1;
+    }
+
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = armt;
+    self->readAhead = 5;
+    self->isEncoder = False;
+    self->remiaining = size;
+    self->state = 0;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(ARMTDecoder_decode_doc,
+"");
+
+static PyObject *
+ARMTDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:ARMTDecoder.decode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+/*
  * common function for python object.
  */
 
@@ -535,6 +631,56 @@ static PyType_Spec ARMDecoder_type_spec = {
         .slots = ARMDecoder_slots,
 };
 
+/* ARMT encoder */
+static PyMethodDef ARMTEncoder_methods[] = {
+        {"encode",     (PyCFunction) ARMTEncoder_encode,
+                             METH_VARARGS | METH_KEYWORDS, ARMTEncoder_encode_doc},
+        {"flush",     (PyCFunction) ARMTEncoder_flush,
+                             METH_VARARGS | METH_KEYWORDS, ARMTEncoder_flush_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot ARMTEncoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    ARMTEncoder_init},
+        {Py_tp_methods, ARMTEncoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec ARMTEncoder_type_spec = {
+        .name = "_bcj.ARMTEncoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = ARMTEncoder_slots,
+};
+
+/* ARMDecoder */
+static PyMethodDef ARMTDecoder_methods[] = {
+        {"decode",     (PyCFunction) ARMTDecoder_decode,
+                             METH_VARARGS | METH_KEYWORDS, ARMTDecoder_decode_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot ARMTDecoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    ARMTDecoder_init},
+        {Py_tp_methods, ARMTDecoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec ARMTDecoder_type_spec = {
+        .name = "_bcj.ARMTDecoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = ARMTDecoder_slots,
+};
+
 /* --------------------
      Initialize code
    -------------------- */
@@ -549,6 +695,8 @@ typedef struct {
     PyTypeObject *BCJDecoder_type;
     PyTypeObject *ARMEncoder_type;
     PyTypeObject *ARMDecoder_type;
+    PyTypeObject *ARMTEncoder_type;
+    PyTypeObject *ARMTDecoder_type;
 } _bcj_state;
 
 static _bcj_state static_state;
@@ -559,6 +707,8 @@ _bcj_traverse(PyObject *module, visitproc visit, void *arg) {
     Py_VISIT(static_state.BCJDecoder_type);
     Py_VISIT(static_state.ARMEncoder_type);
     Py_VISIT(static_state.ARMDecoder_type);
+    Py_VISIT(static_state.ARMTEncoder_type);
+    Py_VISIT(static_state.ARMTDecoder_type);
     return 0;
 }
 
@@ -568,6 +718,8 @@ _bcj_clear(PyObject *module) {
     Py_CLEAR(static_state.BCJDecoder_type);
     Py_CLEAR(static_state.ARMEncoder_type);
     Py_CLEAR(static_state.ARMDecoder_type);
+    Py_CLEAR(static_state.ARMTEncoder_type);
+    Py_CLEAR(static_state.ARMTDecoder_type);
     return 0;
 }
 
@@ -636,6 +788,19 @@ PyInit__bcj(void) {
                            "ARMDecoder",
                            &ARMDecoder_type_spec,
                            &static_state.ARMDecoder_type) < 0) {
+        goto error;
+    }
+
+    if (add_type_to_module(module,
+                           "ARMTEncoder",
+                           &ARMTEncoder_type_spec,
+                           &static_state.ARMTEncoder_type) < 0) {
+        goto error;
+    }
+    if (add_type_to_module(module,
+                           "ARMTDecoder",
+                           &ARMTDecoder_type_spec,
+                           &static_state.ARMTDecoder_type) < 0) {
         goto error;
     }
 
