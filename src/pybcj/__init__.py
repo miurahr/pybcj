@@ -8,11 +8,15 @@ except ImportError:
 from .c.c_bcj import (
     BCJDecoder,
     BCJEncoder,
+    ARMDecoder,
+    ARMEncoder,
 )
 
 __all__ = (
     BCJDecoder,
     BCJEncoder,
+    ARMDecoder,
+    ARMEncoder,
 )
 
 __copyright__ = "Copyright (C) 2021 Hiroshi Miura"
