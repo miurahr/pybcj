@@ -28,13 +28,6 @@ jobs:
       - name: Test project with tox
         run: |
           tox
-      - name: Send coverage to coveralls
-        run: |
-          coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_PARALLEL: true
-          COVERALLS_FLAG_NAME: py-${{ matrix.python-version }}-${{ matrix.os }}
 
   test_on_aarch64:
     name: Build and test on ARM64
@@ -56,16 +49,3 @@ jobs:
             python3 -c "import platform;print('Machine type:', platform.machine())"
             python3 -m pip install -U pip tox
             python3 -m tox -e py38
-
-  finish:
-    runs-on: ubuntu-latest
-    name: finish parallel build
-    needs: [build, test_on_aarch64]
-    steps:
-      - name: Tell Coveralls that the parallel build is finished
-        run: |
-          curl -k \
-              https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN \
-              -d "payload[build_num]=$GITHUB_SHA&payload[status]=done"
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
