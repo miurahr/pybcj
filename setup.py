@@ -15,12 +15,14 @@ sources = [
 _bcj_extension = Extension("pybcj._bcj", sources)
 kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
 
+
 def has_option(option):
     if option in sys.argv:
         sys.argv = [s for s in sys.argv if s != option]
         return True
     else:
         return False
+
 
 if has_option("--cffi") or platform.python_implementation() == "PyPy":
     packages = ["pybcj", "pybcj.cffi"]
