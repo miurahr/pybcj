@@ -323,6 +323,102 @@ BCJDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 }
 
 /*
+ * ARM Encoder.
+ */
+static int
+ARMEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = arm;
+    self->readAhead = 5;
+    self->isEncoder = True;
+    self->remiaining = INT_MAX;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(ARMEncoder_encode_doc,
+"");
+
+static PyObject *
+ARMEncoder_encode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:ARMEncoder.encode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+PyDoc_STRVAR(ARMEncoder_flush_doc,
+"");
+
+static PyObject *
+ARMEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    PyObject* result = BCJFilter_do_flush(self);
+    return result;
+}
+
+/*
+ * ARM Decoder.
+ */
+static int
+ARMDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"size", NULL};
+    int size;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "i:ARMDecoder.__init__", kwlist,
+                                     &size)) {
+        return -1;
+    }
+
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = arm;
+    self->readAhead = 5;
+    self->isEncoder = False;
+    self->remiaining = size;
+    self->state = 0;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(ARMDecoder_decode_doc,
+"");
+
+static PyObject *
+ARMDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:ARMDecoder.decode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+/*
  * common function for python object.
  */
 
@@ -389,6 +485,56 @@ static PyType_Spec BCJDecoder_type_spec = {
         .slots = BCJDecoder_slots,
 };
 
+/* ARM encoder */
+static PyMethodDef ARMEncoder_methods[] = {
+        {"encode",     (PyCFunction) ARMEncoder_encode,
+                             METH_VARARGS | METH_KEYWORDS, ARMEncoder_encode_doc},
+        {"flush",     (PyCFunction) ARMEncoder_flush,
+                             METH_VARARGS | METH_KEYWORDS, ARMEncoder_flush_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot ARMEncoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    ARMEncoder_init},
+        {Py_tp_methods, ARMEncoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec ARMEncoder_type_spec = {
+        .name = "_bcj.ARMEncoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = ARMEncoder_slots,
+};
+
+/* ARMDecoder */
+static PyMethodDef ARMDecoder_methods[] = {
+        {"decode",     (PyCFunction) ARMDecoder_decode,
+                             METH_VARARGS | METH_KEYWORDS, ARMDecoder_decode_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot ARMDecoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    ARMDecoder_init},
+        {Py_tp_methods, ARMDecoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec ARMDecoder_type_spec = {
+        .name = "_bcj.ARMDecoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = ARMDecoder_slots,
+};
+
 /* --------------------
      Initialize code
    -------------------- */
@@ -401,6 +547,8 @@ static PyMethodDef _bcj_methods[] = {
 typedef struct {
     PyTypeObject *BCJEncoder_type;
     PyTypeObject *BCJDecoder_type;
+    PyTypeObject *ARMEncoder_type;
+    PyTypeObject *ARMDecoder_type;
 } _bcj_state;
 
 static _bcj_state static_state;
@@ -409,6 +557,8 @@ static int
 _bcj_traverse(PyObject *module, visitproc visit, void *arg) {
     Py_VISIT(static_state.BCJEncoder_type);
     Py_VISIT(static_state.BCJDecoder_type);
+    Py_VISIT(static_state.ARMEncoder_type);
+    Py_VISIT(static_state.ARMDecoder_type);
     return 0;
 }
 
@@ -416,6 +566,8 @@ static int
 _bcj_clear(PyObject *module) {
     Py_CLEAR(static_state.BCJEncoder_type);
     Py_CLEAR(static_state.BCJDecoder_type);
+    Py_CLEAR(static_state.ARMEncoder_type);
+    Py_CLEAR(static_state.ARMDecoder_type);
     return 0;
 }
 
@@ -467,11 +619,23 @@ PyInit__bcj(void) {
                            &static_state.BCJEncoder_type) < 0) {
         goto error;
     }
-
     if (add_type_to_module(module,
                            "BCJDecoder",
                            &BCJDecoder_type_spec,
                            &static_state.BCJDecoder_type) < 0) {
+        goto error;
+    }
+
+    if (add_type_to_module(module,
+                           "ARMEncoder",
+                           &ARMEncoder_type_spec,
+                           &static_state.ARMEncoder_type) < 0) {
+        goto error;
+    }
+    if (add_type_to_module(module,
+                           "ARMDecoder",
+                           &ARMDecoder_type_spec,
+                           &static_state.ARMDecoder_type) < 0) {
         goto error;
     }
 
