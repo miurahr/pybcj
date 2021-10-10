@@ -5,18 +5,13 @@ except ImportError:
     from importlib_metadata import PackageNotFoundError  # type: ignore
     from importlib_metadata import version  # type: ignore
 
-from .c.c_bcj import (
-    BCJDecoder,
-    BCJEncoder,
-    ARMDecoder,
-    ARMEncoder,
-)
+from .c.c_bcj import ARMDecoder, ARMEncoder, BCJDecoder, BCJEncoder
 
 __all__ = (
-    BCJDecoder,
-    BCJEncoder,
     ARMDecoder,
     ARMEncoder,
+    BCJDecoder,
+    BCJEncoder,
 )
 
 __copyright__ = "Copyright (C) 2021 Hiroshi Miura"

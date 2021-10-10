@@ -1,9 +1,4 @@
-from ._bcj import (
-    BCJDecoder,
-    BCJEncoder,
-    ARMDecoder,
-    ARMEncoder,
-)
+from ._bcj import ARMDecoder, ARMEncoder, BCJDecoder, BCJEncoder
 
 __all__ = (
     BCJDecoder,
