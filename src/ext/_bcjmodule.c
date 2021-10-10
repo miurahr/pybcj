@@ -515,6 +515,102 @@ ARMTDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 }
 
 /*
+ * PPC Encoder.
+ */
+static int
+PPCEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = ppc;
+    self->readAhead = 5;
+    self->isEncoder = True;
+    self->remiaining = INT_MAX;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(PPCEncoder_encode_doc,
+"");
+
+static PyObject *
+PPCEncoder_encode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:PPCEncoder.encode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+PyDoc_STRVAR(PPCEncoder_flush_doc,
+"");
+
+static PyObject *
+PPCEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    PyObject* result = BCJFilter_do_flush(self);
+    return result;
+}
+
+/*
+ * PPC Decoder.
+ */
+static int
+PPCDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"size", NULL};
+    int size;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "i:PPCDecoder.__init__", kwlist,
+                                     &size)) {
+        return -1;
+    }
+
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = ppc;
+    self->readAhead = 5;
+    self->isEncoder = False;
+    self->remiaining = size;
+    self->state = 0;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(PPCDecoder_decode_doc,
+"");
+
+static PyObject *
+PPCDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:PPCDecoder.decode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+/*
  * common function for python object.
  */
 
@@ -681,6 +777,56 @@ static PyType_Spec ARMTDecoder_type_spec = {
         .slots = ARMTDecoder_slots,
 };
 
+/* PPC encoder */
+static PyMethodDef PPCEncoder_methods[] = {
+        {"encode",     (PyCFunction) PPCEncoder_encode,
+                             METH_VARARGS | METH_KEYWORDS, PPCEncoder_encode_doc},
+        {"flush",     (PyCFunction) PPCEncoder_flush,
+                             METH_VARARGS | METH_KEYWORDS, PPCEncoder_flush_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot PPCEncoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    PPCEncoder_init},
+        {Py_tp_methods, PPCEncoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec PPCEncoder_type_spec = {
+        .name = "_bcj.ARMEncoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = PPCEncoder_slots,
+};
+
+/* PPCDecoder */
+static PyMethodDef PPCDecoder_methods[] = {
+        {"decode",     (PyCFunction) PPCDecoder_decode,
+                             METH_VARARGS | METH_KEYWORDS, PPCDecoder_decode_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                  reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot PPCDecoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    PPCDecoder_init},
+        {Py_tp_methods, PPCDecoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec PPCDecoder_type_spec = {
+        .name = "_bcj.PPCDecoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = PPCDecoder_slots,
+};
+
 /* --------------------
      Initialize code
    -------------------- */
@@ -697,6 +843,8 @@ typedef struct {
     PyTypeObject *ARMDecoder_type;
     PyTypeObject *ARMTEncoder_type;
     PyTypeObject *ARMTDecoder_type;
+    PyTypeObject *PPCEncoder_type;
+    PyTypeObject *PPCDecoder_type;
 } _bcj_state;
 
 static _bcj_state static_state;
@@ -709,6 +857,8 @@ _bcj_traverse(PyObject *module, visitproc visit, void *arg) {
     Py_VISIT(static_state.ARMDecoder_type);
     Py_VISIT(static_state.ARMTEncoder_type);
     Py_VISIT(static_state.ARMTDecoder_type);
+    Py_VISIT(static_state.PPCEncoder_type);
+    Py_VISIT(static_state.PPCDecoder_type);
     return 0;
 }
 
@@ -720,6 +870,8 @@ _bcj_clear(PyObject *module) {
     Py_CLEAR(static_state.ARMDecoder_type);
     Py_CLEAR(static_state.ARMTEncoder_type);
     Py_CLEAR(static_state.ARMTDecoder_type);
+    Py_CLEAR(static_state.PPCEncoder_type);
+    Py_CLEAR(static_state.PPCDecoder_type);
     return 0;
 }
 
@@ -801,6 +953,19 @@ PyInit__bcj(void) {
                            "ARMTDecoder",
                            &ARMTDecoder_type_spec,
                            &static_state.ARMTDecoder_type) < 0) {
+        goto error;
+    }
+
+    if (add_type_to_module(module,
+                           "PPCEncoder",
+                           &PPCEncoder_type_spec,
+                           &static_state.PPCEncoder_type) < 0) {
+        goto error;
+    }
+    if (add_type_to_module(module,
+                           "PPCDecoder",
+                           &PPCDecoder_type_spec,
+                           &static_state.PPCDecoder_type) < 0) {
         goto error;
     }
 
