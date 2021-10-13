@@ -17,7 +17,7 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{37,38}, check, mypy
+envlist = py{37,38,39,310}, check, mypy
 
 [testenv]
 passenv = GITHUB_*
@@ -50,9 +50,6 @@ ignore_missing_imports = True
 ignore = F841
 
 [pytest]
-basepython =
-    py37: python3.7
-    py38: python3.8
 python_files = test*.py
 norecursedirs = .git _build tmp* .eggs
 addopts =
@@ -61,4 +58,6 @@ addopts =
 python =
     3.7: py37
     3.8: py38, check
+    3.9: py39
+    3.10: py310
 """
