@@ -1277,26 +1277,26 @@ PyInit__bcj(void) {
     if (add_type_to_module(module,
                            "IA64Encoder",
                            &IA64Encoder_type_spec,
-                           &static_state.PPCEncoder_type) < 0) {
+                           &static_state.IA64Encoder_type) < 0) {
         goto error;
     }
     if (add_type_to_module(module,
                            "IA64Decoder",
                            &IA64Decoder_type_spec,
-                           &static_state.PPCDecoder_type) < 0) {
+                           &static_state.IA64Decoder_type) < 0) {
         goto error;
     }
 
     if (add_type_to_module(module,
                            "SparcEncoder",
-                           &IA64Encoder_type_spec,
-                           &static_state.PPCEncoder_type) < 0) {
+                           &SparcEncoder_type_spec,
+                           &static_state.SparcEncoder_type) < 0) {
         goto error;
     }
     if (add_type_to_module(module,
                            "SparcDecoder",
-                           &IA64Decoder_type_spec,
-                           &static_state.PPCDecoder_type) < 0) {
+                           &SparcDecoder_type_spec,
+                           &static_state.SparcDecoder_type) < 0) {
         goto error;
     }
 
