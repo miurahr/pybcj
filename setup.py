@@ -1,5 +1,4 @@
 import os
-import platform
 import sys
 
 from setuptools import Extension, setup
@@ -14,6 +13,10 @@ sources = [
 
 _bcj_extension = Extension("bcj._bcj", sources)
 kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
+packages = ["bcj", "bcj.c"]
+kwargs["name"] = "bcj.c._bcj"
+kwargs["sources"].append("src/ext/_bcjmodule.c")
+binary_extension = Extension(**kwargs)
 
 
 def has_option(option):
@@ -23,19 +26,6 @@ def has_option(option):
     else:
         return False
 
-
-if has_option("--cffi") or platform.python_implementation() == "PyPy":
-    packages = ["bcj", "pybcj.cffi"]
-    kwargs["module_name"] = "bcj.cffi._cffi_bcj"
-    sys.path.append("src/ext")
-    import ffi_build
-    ffi_build.set_kwargs(**kwargs)
-    binary_extension = ffi_build.ffibuilder.distutils_extension()
-else:
-    packages = ["bcj", "pybcj.c"]
-    kwargs["name"] = "bcj.c._bcj"
-    kwargs["sources"].append("src/ext/_bcjmodule.c")
-    binary_extension = Extension(**kwargs)
 
 
 WARNING_AS_ERROR = has_option("--warning-as-error")
