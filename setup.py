@@ -27,7 +27,6 @@ def has_option(option):
         return False
 
 
-
 WARNING_AS_ERROR = has_option("--warning-as-error")
 
 
