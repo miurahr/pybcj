@@ -12,7 +12,7 @@ sources = [
     "lib/BraIA64.c"
 ]
 
-_bcj_extension = Extension("pybcj._bcj", sources)
+_bcj_extension = Extension("bcj._bcj", sources)
 kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
 
 
@@ -25,15 +25,15 @@ def has_option(option):
 
 
 if has_option("--cffi") or platform.python_implementation() == "PyPy":
-    packages = ["pybcj", "pybcj.cffi"]
-    kwargs["module_name"] = "pybcj.cffi._cffi_bcj"
+    packages = ["bcj", "pybcj.cffi"]
+    kwargs["module_name"] = "bcj.cffi._cffi_bcj"
     sys.path.append("src/ext")
     import ffi_build
     ffi_build.set_kwargs(**kwargs)
     binary_extension = ffi_build.ffibuilder.distutils_extension()
 else:
-    packages = ["pybcj", "pybcj.c"]
-    kwargs["name"] = "pybcj.c._bcj"
+    packages = ["bcj", "pybcj.c"]
+    kwargs["name"] = "bcj.c._bcj"
     kwargs["sources"].append("src/ext/_bcjmodule.c")
     binary_extension = Extension(**kwargs)
 

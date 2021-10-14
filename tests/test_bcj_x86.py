@@ -2,13 +2,13 @@ import binascii
 import hashlib
 import pathlib
 
-import pybcj
+import bcj
 
 
 def test_x86_encode(tmp_path):
     with open(pathlib.Path(__file__).parent.joinpath('data/x86.bin'), 'rb') as f:
         src = f.read()
-    encoder = pybcj.BCJEncoder()
+    encoder = bcj.BCJEncoder()
     dest = encoder.encode(src)
     dest += encoder.flush()
     with open(tmp_path.joinpath('output.bin'), 'wb') as f:
@@ -21,7 +21,7 @@ def test_x86_encode(tmp_path):
 def test_x86_decode(tmp_path):
     with open(pathlib.Path(__file__).parent.joinpath('data/bcj.bin'), 'rb') as f:
         src = f.read()
-    decoder = pybcj.BCJDecoder(len(src))
+    decoder = bcj.BCJDecoder(len(src))
     dest = decoder.decode(src)
     with open(tmp_path.joinpath('output.bin'), 'wb') as f:
         f.write(dest)

@@ -2,13 +2,13 @@ import binascii
 import hashlib
 import pathlib
 
-import pybcj
+import bcj
 
 
 def test_aarch64_encode(tmp_path):
     with open(pathlib.Path(__file__).parent.joinpath('data/lib/aarch64-linux-gnu/liblzma.so.0'), 'rb') as f:
         src = f.read()
-    encoder = pybcj.ARMEncoder()
+    encoder = bcj.ARMEncoder()
     dest = encoder.encode(src)
     dest += encoder.flush()
     with open(tmp_path.joinpath('output.bin'), 'wb') as f:
@@ -21,7 +21,7 @@ def test_aarch64_encode(tmp_path):
 def test_ppc_encode(tmp_path):
     with open(pathlib.Path(__file__).parent.joinpath('data/lib/powerpc64le-linux-gnu/liblzma.so.0'), 'rb') as f:
         src = f.read()
-    encoder = pybcj.PPCEncoder()
+    encoder = bcj.PPCEncoder()
     dest = encoder.encode(src)
     dest += encoder.flush()
     with open(tmp_path.joinpath('output.bin'), 'wb') as f:
