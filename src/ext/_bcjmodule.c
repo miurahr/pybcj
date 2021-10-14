@@ -785,7 +785,7 @@ SparcDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     return -1;
 }
 
-PyDoc_STRVAR(SparcIA64Decoder_decode_doc,
+PyDoc_STRVAR(SparcDecoder_decode_doc,
 "");
 
 static PyObject *
@@ -1073,7 +1073,7 @@ static PyType_Spec IA64Decoder_type_spec = {
 /* Sparc encoder */
 static PyMethodDef SparcEncoder_methods[] = {
         {"encode",     (PyCFunction) SparcEncoder_encode,
-                             METH_VARARGS | METH_KEYWORDS, SparcIncoder_encode_doc},
+                             METH_VARARGS | METH_KEYWORDS, SparcEncoder_encode_doc},
         {"flush",     (PyCFunction) SparcEncoder_flush,
                              METH_VARARGS | METH_KEYWORDS,  SparcEncoder_flush_doc},
         {"__reduce__", (PyCFunction) reduce_cannot_pickle,
