@@ -334,7 +334,7 @@ ARMEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = arm;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = True;
     self->remiaining = INT_MAX;
     return 0;
@@ -390,7 +390,7 @@ ARMDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = arm;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = False;
     self->remiaining = size;
     self->state = 0;
@@ -430,7 +430,7 @@ ARMTEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = armt;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = True;
     self->remiaining = INT_MAX;
     return 0;
@@ -486,7 +486,7 @@ ARMTDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = armt;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = False;
     self->remiaining = size;
     self->state = 0;
@@ -526,7 +526,7 @@ PPCEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = ppc;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = True;
     self->remiaining = INT_MAX;
     return 0;
@@ -582,7 +582,7 @@ PPCDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     }
     self->inited = 1;
     self->method = ppc;
-    self->readAhead = 5;
+    self->readAhead = 4;
     self->isEncoder = False;
     self->remiaining = size;
     self->state = 0;
@@ -753,13 +753,13 @@ static PyType_Spec ARMTEncoder_type_spec = {
         .slots = ARMTEncoder_slots,
 };
 
-/* ARMDecoder */
+/* ARMTDecoder */
 static PyMethodDef ARMTDecoder_methods[] = {
         {"decode",     (PyCFunction) ARMTDecoder_decode,
                              METH_VARARGS | METH_KEYWORDS, ARMTDecoder_decode_doc},
         {"__reduce__", (PyCFunction) reduce_cannot_pickle,
-                             METH_NOARGS,                  reduce_cannot_pickle_doc},
-        {NULL,         NULL, 0,                            NULL}
+                             METH_NOARGS,                reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                          NULL}
 };
 
 static PyType_Slot ARMTDecoder_slots[] = {
