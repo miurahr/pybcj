@@ -15,6 +15,8 @@ __all__ = (
     ARMTEncoder,
     BCJDecoder,
     BCJEncoder,
+    PPCDecoder,
+    PPCEncoder
 )
 
 __copyright__ = "Copyright (C) 2021 Hiroshi Miura"
