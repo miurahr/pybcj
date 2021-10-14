@@ -706,6 +706,103 @@ IA64Decoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     return result;
 }
 
+
+/*
+ * Sparc Encoder.
+ */
+static int
+SparcEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = sparc;
+    self->readAhead = 4;
+    self->isEncoder = True;
+    self->remiaining = INT_MAX;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(SparcEncoder_encode_doc,
+"");
+
+static PyObject *
+SparcEncoder_encode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:SparcEncoder.encode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
+PyDoc_STRVAR(SparcEncoder_flush_doc,
+"");
+
+static PyObject *
+SparcEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    PyObject* result = BCJFilter_do_flush(self);
+    return result;
+}
+
+/*
+ * IA64 Decoder.
+ */
+static int
+SparcDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"size", NULL};
+    int size;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "i:SparcDecoder.__init__", kwlist,
+                                     &size)) {
+        return -1;
+    }
+
+    /* Only called once */
+    if (self->inited) {
+        PyErr_SetString(PyExc_RuntimeError, init_twice_msg);
+        goto error;
+    }
+    self->inited = 1;
+    self->method = sparc;
+    self->readAhead = 4;
+    self->isEncoder = False;
+    self->remiaining = size;
+    self->state = 0;
+    return 0;
+
+    error:
+    return -1;
+}
+
+PyDoc_STRVAR(SparcDecoder_decode_doc,
+"");
+
+static PyObject *
+SparcDecoder_decode(BCJFilter *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = {"data", NULL};
+    Py_buffer data;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                                     "y*:SparcDecoder.decode", kwlist,
+                                     &data)) {
+        return NULL;
+    }
+    PyObject* result = BCJFilter_do_filter(self, &data);
+    PyBuffer_Release(&data);
+    return result;
+}
+
 /*
  * common function for python object.
  */
@@ -823,56 +920,6 @@ static PyType_Spec ARMDecoder_type_spec = {
         .slots = ARMDecoder_slots,
 };
 
-/* IA64 encoder */
-static PyMethodDef IA64Encoder_methods[] = {
-        {"encode",     (PyCFunction) IA64Encoder_encode,
-                             METH_VARARGS | METH_KEYWORDS, IA64Encoder_encode_doc},
-        {"flush",     (PyCFunction) IA64Encoder_flush,
-                             METH_VARARGS | METH_KEYWORDS,  IA64Encoder_flush_doc},
-        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
-                             METH_NOARGS,                reduce_cannot_pickle_doc},
-        {NULL,         NULL, 0,                          NULL}
-};
-
-static PyType_Slot IA64Encoder_slots[] = {
-        {Py_tp_new,     BCJFilter_new},
-        {Py_tp_dealloc, BCJFilter_dealloc},
-        {Py_tp_init,    IA64Encoder_init},
-        {Py_tp_methods, IA64Encoder_methods},
-        {0,             0}
-};
-
-static PyType_Spec IA64Encoder_type_spec = {
-        .name = "_bcj.IA64Encoder",
-        .basicsize = sizeof(BCJFilter),
-        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-        .slots = IA64Encoder_slots,
-};
-
-/* IA64Decoder */
-static PyMethodDef IA64Decoder_methods[] = {
-        {"decode",     (PyCFunction) IA64Decoder_decode,
-                             METH_VARARGS | METH_KEYWORDS, IA64Decoder_decode_doc},
-        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
-                             METH_NOARGS,                reduce_cannot_pickle_doc},
-        {NULL,         NULL, 0,                            NULL}
-};
-
-static PyType_Slot IA64Decoder_slots[] = {
-        {Py_tp_new,     BCJFilter_new},
-        {Py_tp_dealloc, BCJFilter_dealloc},
-        {Py_tp_init,    IA64Decoder_init},
-        {Py_tp_methods, IA64Decoder_methods},
-        {0,             0}
-};
-
-static PyType_Spec IA64Decoder_type_spec = {
-        .name = "_bcj.IA64Decoder",
-        .basicsize = sizeof(BCJFilter),
-        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-        .slots = IA64Decoder_slots,
-};
-
 /* ARMT encoder */
 static PyMethodDef ARMTEncoder_methods[] = {
         {"encode",     (PyCFunction) ARMTEncoder_encode,
@@ -973,6 +1020,106 @@ static PyType_Spec PPCDecoder_type_spec = {
         .slots = PPCDecoder_slots,
 };
 
+/* IA64 encoder */
+static PyMethodDef IA64Encoder_methods[] = {
+        {"encode",     (PyCFunction) IA64Encoder_encode,
+                             METH_VARARGS | METH_KEYWORDS, IA64Encoder_encode_doc},
+        {"flush",     (PyCFunction) IA64Encoder_flush,
+                             METH_VARARGS | METH_KEYWORDS,  IA64Encoder_flush_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                          NULL}
+};
+
+static PyType_Slot IA64Encoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    IA64Encoder_init},
+        {Py_tp_methods, IA64Encoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec IA64Encoder_type_spec = {
+        .name = "_bcj.IA64Encoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = IA64Encoder_slots,
+};
+
+/* IA64Decoder */
+static PyMethodDef IA64Decoder_methods[] = {
+        {"decode",     (PyCFunction) IA64Decoder_decode,
+                             METH_VARARGS | METH_KEYWORDS, IA64Decoder_decode_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot IA64Decoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    IA64Decoder_init},
+        {Py_tp_methods, IA64Decoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec IA64Decoder_type_spec = {
+        .name = "_bcj.IA64Decoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = IA64Decoder_slots,
+};
+
+/* Sparc encoder */
+static PyMethodDef SparcEncoder_methods[] = {
+        {"encode",     (PyCFunction) SparcEncoder_encode,
+                             METH_VARARGS | METH_KEYWORDS, SparcEncoder_encode_doc},
+        {"flush",     (PyCFunction) SparcEncoder_flush,
+                             METH_VARARGS | METH_KEYWORDS,  SparcEncoder_flush_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                          NULL}
+};
+
+static PyType_Slot SparcEncoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    SparcEncoder_init},
+        {Py_tp_methods, SparcEncoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec SparcEncoder_type_spec = {
+        .name = "_bcj.SparcEncoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = SparcEncoder_slots,
+};
+
+/* IA64Decoder */
+static PyMethodDef SparcDecoder_methods[] = {
+        {"decode",     (PyCFunction) SparcDecoder_decode,
+                             METH_VARARGS | METH_KEYWORDS, SparcDecoder_decode_doc},
+        {"__reduce__", (PyCFunction) reduce_cannot_pickle,
+                             METH_NOARGS,                reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                            NULL}
+};
+
+static PyType_Slot SparcDecoder_slots[] = {
+        {Py_tp_new,     BCJFilter_new},
+        {Py_tp_dealloc, BCJFilter_dealloc},
+        {Py_tp_init,    SparcDecoder_init},
+        {Py_tp_methods, SparcDecoder_methods},
+        {0,             0}
+};
+
+static PyType_Spec SparcDecoder_type_spec = {
+        .name = "_bcj.SparcDecoder",
+        .basicsize = sizeof(BCJFilter),
+        .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+        .slots = SparcDecoder_slots,
+};
+
 /* --------------------
      Initialize code
    -------------------- */
@@ -987,12 +1134,14 @@ typedef struct {
     PyTypeObject *BCJDecoder_type;
     PyTypeObject *ARMEncoder_type;
     PyTypeObject *ARMDecoder_type;
-    PyTypeObject *IA64Encoder_type;
-    PyTypeObject *IA64Decoder_type;
     PyTypeObject *ARMTEncoder_type;
     PyTypeObject *ARMTDecoder_type;
     PyTypeObject *PPCEncoder_type;
     PyTypeObject *PPCDecoder_type;
+    PyTypeObject *IA64Encoder_type;
+    PyTypeObject *IA64Decoder_type;
+    PyTypeObject *SparcEncoder_type;
+    PyTypeObject *SparcDecoder_type;
 } _bcj_state;
 
 static _bcj_state static_state;
@@ -1003,12 +1152,14 @@ _bcj_traverse(PyObject *module, visitproc visit, void *arg) {
     Py_VISIT(static_state.BCJDecoder_type);
     Py_VISIT(static_state.ARMEncoder_type);
     Py_VISIT(static_state.ARMDecoder_type);
-    Py_VISIT(static_state.IA64Encoder_type);
-    Py_VISIT(static_state.IA64Decoder_type);
     Py_VISIT(static_state.ARMTEncoder_type);
     Py_VISIT(static_state.ARMTDecoder_type);
     Py_VISIT(static_state.PPCEncoder_type);
     Py_VISIT(static_state.PPCDecoder_type);
+    Py_VISIT(static_state.IA64Encoder_type);
+    Py_VISIT(static_state.IA64Decoder_type);
+    Py_VISIT(static_state.SparcEncoder_type);
+    Py_VISIT(static_state.SparcDecoder_type);
     return 0;
 }
 
@@ -1018,12 +1169,14 @@ _bcj_clear(PyObject *module) {
     Py_CLEAR(static_state.BCJDecoder_type);
     Py_CLEAR(static_state.ARMEncoder_type);
     Py_CLEAR(static_state.ARMDecoder_type);
-    Py_CLEAR(static_state.IA64Encoder_type);
-    Py_CLEAR(static_state.IA64Decoder_type);
     Py_CLEAR(static_state.ARMTEncoder_type);
     Py_CLEAR(static_state.ARMTDecoder_type);
     Py_CLEAR(static_state.PPCEncoder_type);
     Py_CLEAR(static_state.PPCDecoder_type);
+    Py_CLEAR(static_state.IA64Encoder_type);
+    Py_CLEAR(static_state.IA64Encoder_type);
+    Py_CLEAR(static_state.SparcDecoder_type);
+    Py_CLEAR(static_state.SparcDecoder_type);
     return 0;
 }
 
@@ -1096,19 +1249,6 @@ PyInit__bcj(void) {
     }
 
     if (add_type_to_module(module,
-                           "IA64Encoder",
-                           &IA64Encoder_type_spec,
-                           &static_state.PPCEncoder_type) < 0) {
-        goto error;
-    }
-    if (add_type_to_module(module,
-                           "IA64Decoder",
-                           &IA64Decoder_type_spec,
-                           &static_state.PPCDecoder_type) < 0) {
-        goto error;
-    }
-
-    if (add_type_to_module(module,
                            "ARMTEncoder",
                            &ARMTEncoder_type_spec,
                            &static_state.ARMTEncoder_type) < 0) {
@@ -1130,6 +1270,32 @@ PyInit__bcj(void) {
     if (add_type_to_module(module,
                            "PPCDecoder",
                            &PPCDecoder_type_spec,
+                           &static_state.PPCDecoder_type) < 0) {
+        goto error;
+    }
+
+    if (add_type_to_module(module,
+                           "IA64Encoder",
+                           &IA64Encoder_type_spec,
+                           &static_state.PPCEncoder_type) < 0) {
+        goto error;
+    }
+    if (add_type_to_module(module,
+                           "IA64Decoder",
+                           &IA64Decoder_type_spec,
+                           &static_state.PPCDecoder_type) < 0) {
+        goto error;
+    }
+
+    if (add_type_to_module(module,
+                           "SparcEncoder",
+                           &IA64Encoder_type_spec,
+                           &static_state.PPCEncoder_type) < 0) {
+        goto error;
+    }
+    if (add_type_to_module(module,
+                           "SparcDecoder",
+                           &IA64Decoder_type_spec,
                            &static_state.PPCDecoder_type) < 0) {
         goto error;
     }

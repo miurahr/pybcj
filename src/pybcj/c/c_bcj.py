@@ -9,6 +9,8 @@ from ._bcj import (
     IA64Encoder,
     PPCDecoder,
     PPCEncoder,
+    SparcDecoder,
+    SparcEncoder,
 )
 
 __all__ = (
@@ -22,4 +24,6 @@ __all__ = (
     IA64Encoder,
     PPCDecoder,
     PPCEncoder,
+    SparcDecoder,
+    SparcEncoder,
 )

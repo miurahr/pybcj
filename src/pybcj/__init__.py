@@ -16,6 +16,8 @@ from .c.c_bcj import (
     IA64Encoder,
     PPCDecoder,
     PPCEncoder,
+    SparcDecoder,
+    SparcEncoder,
 )
 
 __all__ = (
@@ -29,6 +31,8 @@ __all__ = (
     IA64Encoder,
     PPCDecoder,
     PPCEncoder,
+    SparcDecoder,
+    SparcEncoder,
 )
 
 __copyright__ = "Copyright (C) 2021 Hiroshi Miura"
