@@ -61,15 +61,15 @@ def test_x86_encode_decode2(tmp_path):
             dest += encoder.encode(src)
             src = f.read(BLOCKSIZE)
     dest += encoder.flush()
+    assert len(dest) == 12800
     with open(tmp_path.joinpath("output.bin"), "wb") as f:
         f.write(dest)
-    size = len(dest)
     m = hashlib.sha256()
     m.update(dest)
     assert m.digest() == binascii.unhexlify("e396dadbbe0be4190cdea986e0ec949b049ded2b38df19268a78d32b90b72d42")
     #
     dest = bytearray()
-    decoder = bcj.BCJDecoder(size)
+    decoder = bcj.BCJDecoder(12800)
     with open(tmp_path.joinpath("output.bin"), "rb") as f:
         src = f.read(BLOCKSIZE)
         while len(src) > 0:
