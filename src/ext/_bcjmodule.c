@@ -784,8 +784,8 @@ static PyMethodDef PPCEncoder_methods[] = {
         {"flush",     (PyCFunction) PPCEncoder_flush,
                              METH_VARARGS | METH_KEYWORDS, PPCEncoder_flush_doc},
         {"__reduce__", (PyCFunction) reduce_cannot_pickle,
-                             METH_NOARGS,                  reduce_cannot_pickle_doc},
-        {NULL,         NULL, 0,                            NULL}
+                             METH_NOARGS,              reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                        NULL}
 };
 
 static PyType_Slot PPCEncoder_slots[] = {
@@ -797,7 +797,7 @@ static PyType_Slot PPCEncoder_slots[] = {
 };
 
 static PyType_Spec PPCEncoder_type_spec = {
-        .name = "_bcj.ARMEncoder",
+        .name = "_bcj.PPCEncoder",
         .basicsize = sizeof(BCJFilter),
         .flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
         .slots = PPCEncoder_slots,
@@ -808,8 +808,8 @@ static PyMethodDef PPCDecoder_methods[] = {
         {"decode",     (PyCFunction) PPCDecoder_decode,
                              METH_VARARGS | METH_KEYWORDS, PPCDecoder_decode_doc},
         {"__reduce__", (PyCFunction) reduce_cannot_pickle,
-                             METH_NOARGS,                  reduce_cannot_pickle_doc},
-        {NULL,         NULL, 0,                            NULL}
+                             METH_NOARGS,               reduce_cannot_pickle_doc},
+        {NULL,         NULL, 0,                         NULL}
 };
 
 static PyType_Slot PPCDecoder_slots[] = {
