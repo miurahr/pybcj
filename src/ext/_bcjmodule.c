@@ -181,7 +181,7 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
     SizeT outLen = BCJFilter_do_method(self);
     if (self->remiaining <= self->readAhead) {
         // flush all the data
-        outLen = self->bufSize;
+        outLen = self->bufSize - self->bufPos;
     }
 
     PyObject *result = PyBytes_FromStringAndSize(NULL, outLen);
