@@ -134,17 +134,7 @@ static PyObject *
 BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
     ACQUIRE_LOCK(self);
 
-    if (self->bufPos == self->bufSize) {
-        Byte* tmp = PyMem_Malloc(data->len);
-        if (tmp == NULL) {
-            PyErr_NoMemory();
-            goto error;
-        }
-        memcpy(tmp, data->buf, data->len);
-        self->buffer = tmp;
-        self->bufSize = data->len;
-        self->bufPos = 0;
-    } else if (data->len > 0) {
+    if (data->len > 0) {
         // allocate new buffer when current buffer is smaller than required.
         SizeT carrySize = self->bufSize - self->bufPos;
         SizeT newSize = data->len + carrySize;
@@ -160,12 +150,32 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
                 goto error;
             }
             memcpy(tmp, self->buffer + self->bufPos, carrySize);
-            PyMem_Free(self->buffer);
+            if (self->buffer != NULL) {
+                PyMem_Free(self->buffer);
+            }
             memcpy(tmp + carrySize, data->buf, data->len);
             self->buffer = tmp;
             self->bufSize = newSize;
             self->bufPos = 0;
         }
+    } else if (self->bufPos < self->bufSize) {
+        // when input data size is zero and there is some carry data
+        SizeT carrySize = self->bufSize - self->bufPos;
+        Byte *tmp = PyMem_Malloc(carrySize);
+        if (tmp == NULL) {
+            PyErr_NoMemory();
+            goto error;
+        }
+        memcpy(tmp, self->buffer + self->bufPos, carrySize);
+        PyMem_Free(self->buffer);
+        self->buffer = tmp;
+        self->bufSize = carrySize;
+        self->bufPos = 0;
+    } else {
+        // there is no data, return data with zero size
+        PyObject *result = PyBytes_FromStringAndSize(NULL, 0);
+        RELEASE_LOCK(self);
+        return result;
     }
 
     SizeT outLen = BCJFilter_do_method(self);
