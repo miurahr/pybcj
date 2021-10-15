@@ -1,5 +1,4 @@
 import io
-import sys
 from datetime import timedelta
 
 from hypothesis import given, settings
@@ -29,4 +28,3 @@ def test_fuzzer(obj, bufsize):
         result += decoder.decode(filtered)
         data = f.read(bufsize)
     assert result == obj
-
