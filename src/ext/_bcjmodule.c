@@ -145,19 +145,27 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
         self->bufSize = data->len;
         self->bufPos = 0;
     } else if (data->len > 0) {
-        size_t size = self->bufSize - self->bufPos;
-        Byte *tmp;
-        tmp = PyMem_Malloc(data->len + size);
-        if (tmp == NULL) {
-            PyErr_NoMemory();
-            goto error;
+        // allocate new buffer when current buffer is smaller than required.
+        SizeT carrySize = self->bufSize - self->bufPos;
+        SizeT newSize = data->len + carrySize;
+        if (self->bufSize == newSize) {
+            // reuse buffer
+            memcpy(self->buffer, self->buffer + self->bufPos, carrySize);
+            memcpy(self->buffer + carrySize, data->buf, data->len);
+            self->bufPos = 0;
+        } else {
+            Byte *tmp = PyMem_Malloc(newSize);
+            if (tmp == NULL) {
+                PyErr_NoMemory();
+                goto error;
+            }
+            memcpy(tmp, self->buffer + self->bufPos, carrySize);
+            PyMem_Free(self->buffer);
+            memcpy(tmp + carrySize, data->buf, data->len);
+            self->buffer = tmp;
+            self->bufSize = newSize;
+            self->bufPos = 0;
         }
-        memcpy(tmp, self->buffer + self->bufPos, size);
-        PyMem_Free(self->buffer);
-        memcpy(tmp + size, data->buf, data->len);
-        self->buffer = tmp;
-        self->bufSize = size;
-        self->bufPos = 0;
     }
 
     SizeT outLen = BCJFilter_do_method(self);
