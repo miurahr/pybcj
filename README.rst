@@ -5,6 +5,9 @@ BCJ(Branch-Call-Jump) filter for python
 .. image:: https://badge.fury.io/py/pybcj.svg
   :target: https://badge.fury.io/py/pybcj
 
+.. image:: https://img.shields.io/conda/vn/conda-forge/pybcpy
+  :target: https://anaconda.org/conda-forge/pybcj
+
 .. image:: https://github.com/miurahr/pybcj/workflows/Run%20Tox%20tests/badge.svg
   :target: https://github.com/miurahr/pybcj/actions
 
@@ -38,6 +41,11 @@ As usual, you can install pybcj using python standard pip command.
 
     pip install pybcj
 
+Alternatively, one can also use conda:
+
+.. code-block::
+
+    conda install -c conda-forge pybcj
 
 License
 =======
