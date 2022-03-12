@@ -39,6 +39,12 @@ As usual, you can install pybcj using python standard pip command.
     pip install pybcj
 
 
+WARNING
+-------
+
+* When use it on MSYS2/Mingw64 environment, please set environment variable
+  `SETUPTOOLS_USE_DISTUTILS=stdlib` to install.
+
 License
 =======
 
