@@ -56,9 +56,10 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
         with:
-          update: true
+          update: false
           install: >-
             mingw-w64-x86_64-python-tox
+            mingw-w64-x86_64-python-setuptools-scm
             mingw-w64-x86_64-gcc
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -67,3 +68,5 @@ jobs:
       - name: Run test
         run: |
           python -m tox -e py39
+        env:
+          SETUPTOOLS_USE_DISTUTILS: stdlib
