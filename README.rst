@@ -47,6 +47,12 @@ Alternatively, one can also use conda:
 
     conda install -c conda-forge pybcj
 
+WARNING
+-------
+
+* When use it on MSYS2/Mingw64 environment, please set environment variable
+  `SETUPTOOLS_USE_DISTUTILS=stdlib` to install.
+
 License
 =======
 

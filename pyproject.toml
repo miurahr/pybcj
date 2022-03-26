@@ -34,7 +34,7 @@ legacy_tox_ini = """
 envlist = py{37,38,39,310}, check, mypy
 
 [testenv]
-passenv = GITHUB_*
+passenv = GITHUB_* SETUPTOOLS_USE_DISTUTILS
 extras = test
 commands = python -m pytest -vv -s
 

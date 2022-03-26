@@ -46,3 +46,28 @@ jobs:
             python3 -c "import platform;print('Machine type:', platform.machine())"
             python3 -m pip install -U pip tox
             python3 -m tox -e py38
+
+  test_on_msys2_mingw:
+    name: Build and test on Mingw32/Windows
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: false
+          install: >-
+            git
+            mingw-w64-x86_64-python-tox
+            mingw-w64-x86_64-python-setuptools-scm
+            mingw-w64-x86_64-gcc
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 20
+      - name: Run test
+        run: |
+          python -m tox -e py39
+        env:
+          SETUPTOOLS_USE_DISTUTILS: stdlib
