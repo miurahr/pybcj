@@ -58,6 +58,7 @@ jobs:
         with:
           update: false
           install: >-
+            git
             mingw-w64-x86_64-python-tox
             mingw-w64-x86_64-python-setuptools-scm
             mingw-w64-x86_64-gcc
