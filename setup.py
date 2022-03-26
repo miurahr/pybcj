@@ -5,11 +5,7 @@ from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.egg_info import egg_info
 
-sources = [
-    "lib/Bra.c",
-    "lib/Bra86.c",
-    "lib/BraIA64.c"
-]
+sources = ["lib/Bra.c", "lib/Bra86.c", "lib/BraIA64.c"]
 
 _bcj_extension = Extension("bcj._bcj", sources)
 kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
@@ -50,15 +46,16 @@ class build_ext_compiler_check(build_ext):
 class my_egg_info(egg_info):
     def run(self):
         try:
-            os.remove(os.path.join(self.egg_info, 'SOURCES.txt'))
+            os.remove(os.path.join(self.egg_info, "SOURCES.txt"))
         except FileNotFoundError:
             pass
         super().run()
 
 
-setup(use_scm_version={"local_scheme": "no-local-version"},
-      package_dir={"": "src"},
-      ext_modules=[binary_extension],
-      packages=packages,
-      cmdclass={"build_ext": build_ext_compiler_check, "egg_info": my_egg_info},
-      )
+setup(
+    use_scm_version={"local_scheme": "no-local-version"},
+    package_dir={"": "src"},
+    ext_modules=[binary_extension],
+    packages=packages,
+    cmdclass={"build_ext": build_ext_compiler_check, "egg_info": my_egg_info},
+)
