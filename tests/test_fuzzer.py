@@ -7,8 +7,7 @@ from hypothesis import strategies as st
 import bcj
 
 
-@given(obj=st.binary(min_size=1, max_size=10240000),
-       bufsize=st.integers(min_value=8192, max_value=1024000))
+@given(obj=st.binary(min_size=1, max_size=10240000), bufsize=st.integers(min_value=8192, max_value=1024000))
 @settings(deadline=timedelta(milliseconds=300))
 def test_fuzzer(obj, bufsize):
     encoder = bcj.BCJEncoder()
