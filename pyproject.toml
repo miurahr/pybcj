@@ -33,7 +33,6 @@ dependencies = ['importlib_metadata;python_version<"3.8"']
 test = [
     "pytest>=6.0",
     "pytest-cov",
-    "atheris",
     "hypothesis",
     "coverage[toml]>=5.2",
 ]
