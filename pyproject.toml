@@ -28,6 +28,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = ['importlib_metadata;python_version<"3.8"']
+dynamic=["version"]
 
 [project.optional-dependencies]
 test = [
