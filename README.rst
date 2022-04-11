@@ -5,7 +5,7 @@ BCJ(Branch-Call-Jump) filter for python
 .. image:: https://badge.fury.io/py/pybcj.svg
   :target: https://badge.fury.io/py/pybcj
 
-.. image:: https://img.shields.io/conda/vn/conda-forge/pybcpy
+.. image:: https://img.shields.io/conda/vn/conda-forge/pybcj
   :target: https://anaconda.org/conda-forge/pybcj
 
 .. image:: https://github.com/miurahr/pybcj/workflows/Run%20Tox%20tests/badge.svg
