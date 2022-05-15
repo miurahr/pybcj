@@ -1,3 +1,8 @@
+/**
+ * PyBcj library.
+ * Copyright 2020-2022, Hiroshi Miura
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ */
 #include "Python.h"
 #include "pythread.h"   /* For Python 3.6 */
 #include "structmember.h"

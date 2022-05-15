@@ -1,3 +1,7 @@
+# pybcj library.
+# Copyright 2020-2022 Hiroshi Miura
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
 try:
     from importlib.metadata import PackageNotFoundError  # type: ignore
     from importlib.metadata import version  # type: ignore

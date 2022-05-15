@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v0.5.3`_
+=========
+
+Fixed
+-----
+
+- Fix segmentation fault in a proper condition (#16)
+
 `v0.5.2`_
 =========
 
@@ -63,7 +71,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.5.2...HEAD
+.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.5.3...HEAD
+.. _v0.5.3: https://github.com/miurahr/pybcj/compare/v0.5.2...v0.5.3
 .. _v0.5.2: https://github.com/miurahr/pybcj/compare/v0.5.1...v0.5.2
 .. _v0.5.1: https://github.com/miurahr/pybcj/compare/v0.5.0...v0.5.1
 .. _v0.5.0: https://github.com/miurahr/pybcj/compare/v0.2.0...v0.5.0
