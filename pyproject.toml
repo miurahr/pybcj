@@ -114,9 +114,6 @@ show_column_numbers = True
 [mypy-bcj.*]
 ignore_missing_imports = True
 
-[flake8]
-ignore = F841
-
 [pytest]
 python_files = test*.py
 norecursedirs = .git _build tmp* .eggs
