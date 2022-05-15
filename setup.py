@@ -13,8 +13,8 @@ sources = ["lib/Bra.c", "lib/Bra86.c", "lib/BraIA64.c"]
 
 _bcj_extension = Extension("bcj._bcj", sources)
 kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
-packages = ["bcj", "bcj.c"]
-kwargs["name"] = "bcj.c._bcj"
+packages = ["bcj"]
+kwargs["name"] = "bcj._bcj"
 kwargs["sources"].append("src/ext/_bcjmodule.c")
 binary_extension = Extension(**kwargs)
 

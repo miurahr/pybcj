@@ -9,7 +9,7 @@ except ImportError:
     from importlib_metadata import PackageNotFoundError  # type: ignore
     from importlib_metadata import version  # type: ignore
 try:
-    from .c.c_bcj import (
+    from ._bcj import (
         ARMDecoder,
         ARMEncoder,
         ARMTDecoder,
