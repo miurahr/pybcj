@@ -194,17 +194,7 @@ BCJFilter_do_filter(BCJFilter *self, Py_buffer *data) {
     }
     char *posi = PyBytes_AS_STRING(result);
     memcpy(posi, (const char*)(self->buffer + self->bufPos), outLen);
-
-    /* unconsumed input data */
-    if (outLen == self->bufSize - self->bufPos) {
-        // finished; release buffer
-        PyMem_Free(self->buffer);
-        self->bufPos = 0;
-        self->bufSize = 0;
-    } else {
-        /* keep unconsumed data position */
-        self->bufPos += outLen;
-    }
+    self->bufPos += outLen;
     RELEASE_LOCK(self);
     return result;
 
@@ -235,6 +225,9 @@ BCJFilter_do_flush(BCJFilter *self) {
         }
         char *posi = PyBytes_AS_STRING(result);
         memcpy(posi, (const char *) self->buffer + self->bufPos, out_len);
+        if (self->buffer != NULL) {
+            PyMem_Free(self->buffer);
+        }
     }
     RELEASE_LOCK(self);
     return result;
