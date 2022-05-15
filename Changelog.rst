@@ -15,6 +15,11 @@ Fixed
 
 - Fix segmentation fault in a proper condition (#16)
 
+Changed
+-------
+
+- Update copyright header.
+
 `v0.5.2`_
 =========
 
