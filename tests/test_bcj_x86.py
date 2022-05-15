@@ -97,6 +97,10 @@ def test_x86_encode_decode_complex(tmp_path):
     with open(tmp_path.joinpath("output.bin"), "wb") as f:
         f.write(dest)
     #
+    m = hashlib.sha256()
+    m.update(dest)
+    assert m.digest() == binascii.unhexlify("6a2db91985d82b4cb5a8dc088acaacdf2dbd0ca3d7a4d5763290c7cdd7e648b1")
+    #
     decoder = bcj.BCJDecoder(total_length)
     with open(tmp_path.joinpath("output.bin"), "rb") as f:
         dest = bytearray()
