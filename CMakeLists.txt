@@ -36,13 +36,18 @@ else()
   set(BUILD_EXT_PYTHON ${Python_EXECUTABLE})
   set(BUILD_EXT_OPTION)
 endif()
+set(pybcj_sources lib/Bra.c lib/Bra86.c lib/BraIA64.c)
+set(pybcj_ext_src src/ext/_bcjmodule.c)
 add_custom_target(
   generate_ext
   BYPRODUCTS ${PY_EXT}
   COMMAND ${BUILD_EXT_PYTHON} setup.py build_ext ${BUILD_EXT_OPTION} --inplace
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS venv.stamp
-  SOURCES ${pybcj_sources})
+  SOURCES ${pybcj_sources} ${pybcj_ext_src})
+add_library(_pybcj_ext MODULE ${pybcj_sources} ${pybcj_ext_src})
+target_include_directories(_pybcj_ext PRIVATE ${Python_INCLUDE_DIRS} lib)
+target_link_libraries(_pybcj_ext PRIVATE ${Python_LIBRARIES})
 # ##################################################################################################
 # create virtualenv
 file(
