@@ -7,6 +7,20 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v0.6.0b1`_
+===========
+
+Changed
+-------
+
+- Change internal package path for extension (#17)
+
+Added
+-----
+
+- Add pure python filter for PyPy (#17)
+- Add more test cases (#17)
+
 `v0.5.3`_
 =========
 
@@ -76,7 +90,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.5.3...HEAD
+.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.6.0b1...HEAD
+.. _v0.6.0b1: https://github.com/miurahr/pybcj/compare/v0.5.3...v0.6.0b1
 .. _v0.5.3: https://github.com/miurahr/pybcj/compare/v0.5.2...v0.5.3
 .. _v0.5.2: https://github.com/miurahr/pybcj/compare/v0.5.1...v0.5.2
 .. _v0.5.1: https://github.com/miurahr/pybcj/compare/v0.5.0...v0.5.1

@@ -2,7 +2,7 @@
 name = "pybcj"
 requires-python = ">=3.6"
 description = "bcj filter library"
-keywords = ["7zip", "bcj"]
+keywords = ["lzma", "bcj"]
 readme = "README.rst"
 license = {file = "LICENSE"}
 authors = [
