@@ -1,4 +1,4 @@
-# pybcj library.
+# PyBcj library.
 # Copyright 2020-2022 Hiroshi Miura
 # SPDX-License-Identifier: LGPL-2.1-or-later
 #
@@ -8,21 +8,40 @@ try:
 except ImportError:
     from importlib_metadata import PackageNotFoundError  # type: ignore
     from importlib_metadata import version  # type: ignore
-
-from .c.c_bcj import (
-    ARMDecoder,
-    ARMEncoder,
-    ARMTDecoder,
-    ARMTEncoder,
-    BCJDecoder,
-    BCJEncoder,
-    IA64Decoder,
-    IA64Encoder,
-    PPCDecoder,
-    PPCEncoder,
-    SparcDecoder,
-    SparcEncoder,
-)
+try:
+    from ._bcj import (
+        ARMDecoder,
+        ARMEncoder,
+        ARMTDecoder,
+        ARMTEncoder,
+        BCJDecoder,
+        BCJEncoder,
+        IA64Decoder,
+        IA64Encoder,
+        PPCDecoder,
+        PPCEncoder,
+        SparcDecoder,
+        SparcEncoder,
+    )
+except ImportError:
+    try:
+        from ._bcjfilter import (
+            ARMDecoder,
+            ARMEncoder,
+            ARMTDecoder,
+            ARMTEncoder,
+            BCJDecoder,
+            BCJEncoder,
+            IA64Decoder,
+            IA64Encoder,
+            PPCDecoder,
+            PPCEncoder,
+            SparcDecoder,
+            SparcEncoder,
+        )
+    except ImportError:
+        msg = "pybcj module: Neither C implementation nor Python implementation can be imported."
+        raise ImportError(msg)
 
 __all__ = (
     ARMDecoder,

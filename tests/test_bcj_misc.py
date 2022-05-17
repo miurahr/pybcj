@@ -6,10 +6,7 @@ import bcj
 
 
 def test_aarch64_encode(tmp_path):
-    with open(
-        pathlib.Path(__file__).parent.joinpath("data/lib/aarch64-linux-gnu/liblzma.so.0"),
-        "rb",
-    ) as f:
+    with open(pathlib.Path(__file__).parent.joinpath("data/lib/aarch64-linux-gnu/liblzma.so.0"), "rb") as f:
         src = f.read()
     encoder = bcj.ARMEncoder()
     dest = encoder.encode(src)
@@ -22,10 +19,7 @@ def test_aarch64_encode(tmp_path):
 
 
 def test_ppc_encode(tmp_path):
-    with open(
-        pathlib.Path(__file__).parent.joinpath("data/lib/powerpc64le-linux-gnu/liblzma.so.0"),
-        "rb",
-    ) as f:
+    with open(pathlib.Path(__file__).parent.joinpath("data/lib/powerpc64le-linux-gnu/liblzma.so.0"), "rb") as f:
         src = f.read()
     encoder = bcj.PPCEncoder()
     dest = encoder.encode(src)

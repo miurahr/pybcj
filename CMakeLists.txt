@@ -15,7 +15,7 @@ set(DEBUG_BUILD ON)
 set(Python_FIND_STRATEGY VERSION)
 find_package(Python ${PY_VERSION}.0...${PY_VERSION}.99 COMPONENTS Interpreter Development)
 set(PY_EXT_FILE _bcj)
-set(PY_EXT_DIR src/bcj/c)
+set(PY_EXT_DIR src/bcj)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/get_ext.py
      "import sysconfig\nprint(sysconfig.get_config_var('EXT_SUFFIX'))\n")
 execute_process(
