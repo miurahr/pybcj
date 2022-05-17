@@ -145,7 +145,7 @@ jobs:
   # Upload to PyPI
   upload_pypi:
     name: Publish to PyPI
-    needs: [build_wheels, build_in_manylinux2010]
+    needs: [build_wheels, build_in_manylinux2010, build_wheels_musllinux]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
