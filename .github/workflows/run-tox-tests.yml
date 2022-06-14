@@ -23,7 +23,7 @@ jobs:
             "3.8",
             "3.9",
             "3.10",
-            "pypy3",
+            "pypy-3.7",
         ]
         include:
           - os: macos-latest
@@ -34,15 +34,17 @@ jobs:
     name: Test on Python ${{ matrix.python-version }} (${{ matrix.os }})
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 20
       - name: Set up Python 🐍
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
       - name: Install dependencies 🔧
         run: |
-          pip install -U pip
+          pip install -U pip setuptools setuptools_scm[toml]
           pip install tox tox-gh-actions
       - name: Test project with tox
         run: |
@@ -53,7 +55,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 20
       - uses: uraimo/run-on-arch-action@v2.2.0
@@ -67,7 +69,7 @@ jobs:
           run: |
             git config --global --add safe.directory ${GITHUB_WORKSPACE}
             python3 -c "import platform;print('Machine type:', platform.machine())"
-            python3 -m pip install -U pip tox
+            python3 -m pip install -U pip tox setuptools setuptools_scm[toml]
             python3 -m tox -e py38
 
   test_on_msys2_mingw:
@@ -86,7 +88,7 @@ jobs:
             mingw-w64-x86_64-python-setuptools-scm
             mingw-w64-x86_64-gcc
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 20
       - name: Run test
