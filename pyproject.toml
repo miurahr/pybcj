@@ -4,7 +4,7 @@ requires-python = ">=3.6"
 description = "bcj filter library"
 keywords = ["lzma", "bcj"]
 readme = "README.rst"
-license = {file = "LICENSE"}
+license = {text = "LGPL-2.1-or-later"}
 authors = [
     {name = "Hiroshi Miura", email = "miurahr@linux.com"},
 ]
