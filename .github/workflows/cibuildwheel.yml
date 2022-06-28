@@ -25,7 +25,8 @@ jobs:
       CIBW_ARCHS_LINUX: "auto aarch64"
       CIBW_SKIP: "*musllinux*"
       CIBW_ARCHS_MACOS: "x86_64 arm64"
-
+      # Include latest Python beta
+      CIBW_PRERELEASE_PYTHONS: True
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -122,10 +123,12 @@ jobs:
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Set up Python 🐍
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
       - name: Build source distribution & wheels🎡
         run: |
-          python setup.py sdist --formats=gztar
-          python -m pip install -U pip
+          python -m pip install -U pip setuptools setuptools_scm[toml] build
+          python -m build --sdist
           python -m pip install -U cibuildwheel
           python -m cibuildwheel --output-dir wheelhouse
 
