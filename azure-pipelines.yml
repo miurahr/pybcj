@@ -1,0 +1,94 @@
+trigger:
+- main
+
+jobs:
+- job: linux
+  pool: {vmImage: 'Ubuntu-latest'}
+  steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.x'
+      inputs:
+        disableDownloadFromRegistry: true
+    - bash: |
+        set -o errexit
+        python3 -m pip install --upgrade pip
+        pip3 install cibuildwheel==2.8.0
+      displayName: 'Install dependencies'
+    - bash: cibuildwheel --output-dir wheelhouse .
+      env:
+        CIBW_PRERELEASE_PYTHONS: True
+        CIBW_ARCHS_LINUX: auto
+      displayName: 'Build wheels'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: wheelhouse
+        ArtifactName: wheelhouse
+      displayName: 'Publish Artifact'
+
+- job: macos
+  pool: {vmImage: 'macOS-latest'}
+  steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.x'
+      inputs:
+        disableDownloadFromRegistry: true
+    - bash: |
+        set -o errexit
+        python3 -m pip install --upgrade pip
+        python3 -m pip install cibuildwheel==2.8.0
+      displayName: 'Install dependencies'
+    - bash: cibuildwheel --output-dir wheelhouse .
+      env:
+        CIBW_ARCHS_MACOS: x86_64 universal2 arm64
+        CIBW_PRERELEASE_PYTHONS: True
+      displayName: 'Build wheels'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: wheelhouse
+        ArtifactName: wheelhouse
+      displayName: 'Publish Artifact'
+
+- job: windows
+  pool: {vmImage: 'windows-latest'}
+  steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.x'
+      inputs:
+        disableDownloadFromRegistry: true
+    - bash: |
+        set -o errexit
+        python -m pip install --upgrade pip
+        pip install cibuildwheel==2.8.0
+      displayName: 'Install dependencies'
+    - bash: cibuildwheel --output-dir wheelhouse .
+      displayName: 'Build wheels'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: wheelhouse
+        ArtifactName: wheelhouse
+      displayName: 'Publish Artifact'
+
+- job: publish
+  dependsOn:
+    - linux
+    - macos
+    - windows
+  pool:
+    name: Azure Pipelines
+  steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.x'
+    - task: DownloadBuildArtifacts@1
+      displayName: 'Download Build Artifacts'
+      inputs:
+        artifactName: wheelhouse
+        downloadPath: wheelhouse
+    - bash: |
+        python -m pip install twine
+      displayName: 'Install Dependencies'
+    - task: TwineAuthenticate@1
+      displayName: 'Twine Authenticate '
+      inputs:
+        pythonUploadServiceConnection: 'testpypi_inflate64'
+    - bash: 'python -m twine upload --config-file $(PYPIRC_PATH) dist/wheelhouse/*.whl'
+      displayName: 'Upload to Test.PyPI.org'
