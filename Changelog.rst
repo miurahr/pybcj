@@ -7,6 +7,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Changed
+-------
+- Add type hint
+- test: use flake8 plugins
+  * black, colors, isort, typing
+
 `v0.6.0`_
 =========
 
