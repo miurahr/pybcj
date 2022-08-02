@@ -23,16 +23,16 @@ class BCJFilter:
         self._method = func
         self._readahead = readahead
 
-    def sparc_code(self):
-        limit = len(self.buffer) - 4
-        i = 0
+    def sparc_code(self) -> int:
+        limit: int = len(self.buffer) - 4
+        i: int = 0
         while i <= limit:
             if (self.buffer[i], self.buffer[i + 1] & 0xC0) in [
                 (0x40, 0x00),
                 (0x7F, 0xC0),
             ]:
                 src = struct.unpack(">L", self.buffer[i : i + 4])[0] << 2
-                distance = self.current_position + i
+                distance: int = self.current_position + i
                 if self.is_encoder:
                     dest = (src + distance) >> 2
                 else:
@@ -43,12 +43,12 @@ class BCJFilter:
         self.current_position = i
         return i
 
-    def ppc_code(self):
-        limit = len(self.buffer) - 4
-        i = 0
+    def ppc_code(self) -> int:
+        limit: int = len(self.buffer) - 4
+        i: int = 0
         while i <= limit:
             # PowerPC branch 6(48) 24(Offset) 1(Abs) 1(Link)
-            distance = self.current_position + i
+            distance: int = self.current_position + i
             if self.buffer[i] & 0xFC == 0x48 and self.buffer[i + 3] & 0x03 == 1:
                 src = struct.unpack(">L", self.buffer[i : i + 4])[0] & 0x3FFFFFC
                 if self.is_encoder:
@@ -65,7 +65,7 @@ class BCJFilter:
     def _unpack_thumb(self, b: Union[bytearray, bytes, memoryview]) -> int:
         return ((b[1] & 0x07) << 19) | (b[0] << 11) | ((b[3] & 0x07) << 8) | b[2]
 
-    def _pack_thumb(self, val: int):
+    def _pack_thumb(self, val: int) -> bytes:
         b = bytes(
             [
                 (val >> 11) & 0xFF,
@@ -77,12 +77,12 @@ class BCJFilter:
         return b
 
     def armt_code(self) -> int:
-        limit = len(self.buffer) - 4
-        i = 0
+        limit: int = len(self.buffer) - 4
+        i: int = 0
         while i <= limit:
             if self.buffer[i + 1] & 0xF8 == 0xF0 and self.buffer[i + 3] & 0xF8 == 0xF8:
                 src = self._unpack_thumb(self.buffer[i : i + 4]) << 1
-                distance = self.current_position + i + 4
+                distance: int = self.current_position + i + 4
                 if self.is_encoder:
                     dest = src + distance
                 else:
@@ -116,16 +116,16 @@ class BCJFilter:
         It is slightly different from LZMA-SDK's bra86.c
         :return: buffer position
         """
-        size = len(self.buffer)
+        size: int = len(self.buffer)
         if size < 5:
             return 0
         if self.current_position - self.prev_pos > 5:
             self.prev_pos = self.current_position - 5
         view = memoryview(self.buffer)
-        limit = size - 5
-        buffer_pos = 0
-        pos1 = 0
-        pos2 = 0
+        limit: int = size - 5
+        buffer_pos: int = 0
+        pos1: int = 0
+        pos2: int = 0
         while buffer_pos <= limit:
             # --
             # The following is pythonic way as same as
@@ -192,9 +192,9 @@ class BCJFilter:
 
     def decode(self, data: Union[bytes, bytearray, memoryview], max_length: int = -1) -> bytes:
         self.buffer.extend(data)
-        pos = self._method()
+        pos: int = self._method()
         if self.current_position > self.stream_size - self._readahead:
-            offset = self.stream_size - self.current_position
+            offset: int = self.stream_size - self.current_position
             tmp = bytes(self.buffer[: pos + offset])
             self.current_position = self.stream_size
             self.buffer = bytearray()
@@ -205,12 +205,12 @@ class BCJFilter:
 
     def encode(self, data: Union[bytes, bytearray, memoryview]) -> bytes:
         self.buffer.extend(data)
-        pos = self._method()
+        pos: int = self._method()
         tmp = bytes(self.buffer[:pos])
         self.buffer = self.buffer[pos:]
         return tmp
 
-    def flush(self):
+    def flush(self) -> bytes:
         return bytes(self.buffer)
 
 
