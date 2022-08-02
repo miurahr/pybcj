@@ -29,7 +29,7 @@ pybcj support Intel/Amd x86/x86_64, Arm/Arm64, ArmThumb, Sparc, PPC, and IA64.
 Development status
 ==================
 
-A development status is considered as ``Alpha`` state.
+A development status is considered as ``Beta`` state.
 
 
 Installation
