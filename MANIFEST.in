@@ -6,10 +6,7 @@ recursive-include lib *.h
 recursive-include lib *.c
 recursive-include src *.py
 recursive-include src *.c
-recursive-include src *.pyi
 recursive-include src py.typed
 recursive-include tests *.py
-recursive-include tests *.bin
-recursive-include tests *.so.0
-recursive-include tests *.exe
+recursive-include tests *.zip
 

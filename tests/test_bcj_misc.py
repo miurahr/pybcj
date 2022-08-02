@@ -1,13 +1,14 @@
 import binascii
 import hashlib
 import pathlib
+import zipfile
 
 import bcj
 
 
 def test_aarch64_encode(tmp_path):
-    with open(pathlib.Path(__file__).parent.joinpath("data/lib/aarch64-linux-gnu/liblzma.so.0"), "rb") as f:
-        src = f.read()
+    with zipfile.ZipFile(pathlib.Path(__file__).parent.joinpath("data/lib.zip")) as f:
+        src = f.read("lib/aarch64-linux-gnu/liblzma.so.0")
     encoder = bcj.ARMEncoder()
     dest = encoder.encode(src)
     dest += encoder.flush()
@@ -19,8 +20,8 @@ def test_aarch64_encode(tmp_path):
 
 
 def test_ppc_encode(tmp_path):
-    with open(pathlib.Path(__file__).parent.joinpath("data/lib/powerpc64le-linux-gnu/liblzma.so.0"), "rb") as f:
-        src = f.read()
+    with zipfile.ZipFile(pathlib.Path(__file__).parent.joinpath("data/lib.zip")) as f:
+        src = f.read("lib/powerpc64le-linux-gnu/liblzma.so.0")
     encoder = bcj.PPCEncoder()
     dest = encoder.encode(src)
     dest += encoder.flush()
