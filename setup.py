@@ -9,13 +9,16 @@ from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.egg_info import egg_info
 
-sources = ["lib/Bra.c", "lib/Bra86.c", "lib/BraIA64.c"]
-
-_bcj_extension = Extension("bcj._bcj", sources)
-kwargs = {"include_dirs": ["lib"], "library_dirs": [], "libraries": [], "sources": sources, "define_macros": []}
+sources = ["src/ext/Bra.c", "src/ext/Bra86.c", "src/ext/BraIA64.c", "src/ext/_bcjmodule.c"]
+kwargs = {
+    "name": "bcj._bcj",
+    "include_dirs": ["src/ext"],
+    "library_dirs": [],
+    "libraries": [],
+    "sources": sources,
+    "define_macros": [],
+}
 packages = ["bcj"]
-kwargs["name"] = "bcj._bcj"
-kwargs["sources"].append("src/ext/_bcjmodule.c")
 binary_extension = Extension(**kwargs)
 
 
@@ -57,7 +60,6 @@ class my_egg_info(egg_info):
 
 
 setup(
-    use_scm_version={"local_scheme": "no-local-version"},
     package_dir={"": "src"},
     ext_modules=[binary_extension],
     packages=packages,

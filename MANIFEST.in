@@ -3,10 +3,9 @@ include *.yml
 include pyproject.toml
 include LICENSE
 include CMakeLists.txt
-recursive-include lib *.h
-recursive-include lib *.c
 recursive-include src *.py
 recursive-include src *.c
+recursive-include src *.h
 recursive-include src py.typed
 recursive-include tests *.py
 recursive-include tests *.zip

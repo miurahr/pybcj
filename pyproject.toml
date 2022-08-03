@@ -52,13 +52,13 @@ check = [
 ]
 
 [project.urls]
-Source = "https://github.com/miurahr/pybcj"
+Source = "https://codeberg.org/miurahr/pybcj"
 
 [build-system]
 requires = ["setuptools>=58", "wheel", "setuptools_scm[toml]>=6.0.1"]
 build-backend = "setuptools.build_meta"
 
-[tools.setuptools_scm]
+[tool.setuptools_scm]
 local_scheme = "no-local-version"
 
 [tool.coverage.run]
@@ -88,6 +88,7 @@ line_length = 125
 legacy_tox_ini = """
 [tox]
 envlist = py{37,38,39,310}, pypy3, check, mypy
+isolated_build=True
 
 [testenv]
 passenv = GITHUB_* SETUPTOOLS_USE_DISTUTILS
