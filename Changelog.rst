@@ -19,6 +19,14 @@ Fixed
 -----
 * gitea: issue template
 
+`v0.6.1`_
+=========
+
+Changed
+-------
+
+* Publish wheels for python 3.11 beta
+
 `v0.6.0`_
 =========
 
@@ -56,7 +64,7 @@ Changed
 Fixed
 -----
 
-- Fix pyproject.toml: add missing dynamic propety(#14)
+- Fix pyproject.toml: add missing dynamic property(#14)
 
 
 `v0.5.1`_
@@ -106,7 +114,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.6.0...HEAD
+.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.6.1...HEAD
+.. _v0.6.1: https://github.com/miurahr/pybcj/compare/v0.6.0...v0.6.1
 .. _v0.6.0: https://github.com/miurahr/pybcj/compare/v0.5.3...v0.6.0
 .. _v0.5.3: https://github.com/miurahr/pybcj/compare/v0.5.2...v0.5.3
 .. _v0.5.2: https://github.com/miurahr/pybcj/compare/v0.5.1...v0.5.2
