@@ -9,9 +9,15 @@ All notable changes to this project will be documented in this file.
 
 Changed
 -------
+- test: zipping test case data
 - Add type hint
 - test: use flake8 plugins
   * black, colors, isort, typing
+- Drop github workflows
+
+Fixed
+-----
+* gitea: issue template
 
 `v0.6.0`_
 =========
