@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v1.0.0`_
+=========
+
 Changed
 -------
 - test: zipping test case data
@@ -14,6 +17,7 @@ Changed
 - test: use flake8 plugins
   * black, colors, isort, typing
 - Drop github workflows
+- Move forge to codeberg.org
 
 Fixed
 -----
@@ -114,12 +118,13 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://github.com/miurahr/pybcj/compare/v0.6.1...HEAD
-.. _v0.6.1: https://github.com/miurahr/pybcj/compare/v0.6.0...v0.6.1
-.. _v0.6.0: https://github.com/miurahr/pybcj/compare/v0.5.3...v0.6.0
-.. _v0.5.3: https://github.com/miurahr/pybcj/compare/v0.5.2...v0.5.3
-.. _v0.5.2: https://github.com/miurahr/pybcj/compare/v0.5.1...v0.5.2
-.. _v0.5.1: https://github.com/miurahr/pybcj/compare/v0.5.0...v0.5.1
-.. _v0.5.0: https://github.com/miurahr/pybcj/compare/v0.2.0...v0.5.0
-.. _v0.2.0: https://github.com/miurahr/pybcj/compare/v0.1.1...v0.2.0
-.. _v0.1.1: https://github.com/miurahr/pybcj/compare/v0.1.0...v0.1.1
+.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...HEAD
+.. _v1.0.0: https://codeberg.org/miurahr/pybcj/compare/v0.6.1...v1.0.0
+.. _v0.6.1: https://codeberg.org/miurahr/pybcj/compare/v0.6.0...v0.6.1
+.. _v0.6.0: https://codeberg.org/miurahr/pybcj/compare/v0.5.3...v0.6.0
+.. _v0.5.3: https://codeberg.org/miurahr/pybcj/compare/v0.5.2...v0.5.3
+.. _v0.5.2: https://codeberg.org/miurahr/pybcj/compare/v0.5.1...v0.5.2
+.. _v0.5.1: https://codeberg.org/miurahr/pybcj/compare/v0.5.0...v0.5.1
+.. _v0.5.0: https://codeberg.org/miurahr/pybcj/compare/v0.2.0...v0.5.0
+.. _v0.2.0: https://codeberg.org/miurahr/pybcj/compare/v0.1.1...v0.2.0
+.. _v0.1.1: https://codeberg.org/miurahr/pybcj/compare/v0.1.0...v0.1.1
