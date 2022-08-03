@@ -56,11 +56,8 @@ WARNING
 License
 =======
 
-pybcj library is provided under
-
 - SPDX-License-Identifier: LGPL-2.1-or-later
 - SPDX-URL: https://spdx.org/licenses/LGPL-2.1-or-later.html
 
 * Copyright (C) 2020-2022 Hiroshi Miura
-* 7-Zip Copyright (C) 1999-2010 Igor Pavlov
-* LZMA SDK Copyright (C) 1999-2010 Igor Pavlov
+* Copyright (C) 1999-2010 Igor Pavlov
