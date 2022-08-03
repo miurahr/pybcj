@@ -8,8 +8,8 @@ BCJ(Branch-Call-Jump) filter for python
 .. image:: https://img.shields.io/conda/vn/conda-forge/pybcj
   :target: https://anaconda.org/conda-forge/pybcj
 
-.. image:: https://github.com/miurahr/pybcj/workflows/Run%20Tox%20tests/badge.svg
-  :target: https://github.com/miurahr/pybcj/actions
+.. image:: https://dev.azure.com/miurahr/CodeBerg/_apis/build/status/CodeBerg-pybcj-CI?branchName=main
+  :target: https://dev.azure.com/miurahr/CodeBerg/_build/latest?definitionId=32&branchName=main
 
 .. image:: https://coveralls.io/repos/github/miurahr/pybcj/badge.svg?branch=main
   :target: https://coveralls.io/github/miurahr/pybcj?branch=main
