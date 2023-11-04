@@ -7,6 +7,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+- Support python 3.12
+- Add cibuildwheel config
+
+
 `v1.0.1`_
 =========
 
