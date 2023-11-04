@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 # TARGET PYTHON version
-set(PY_VERSION 3.8)
+set(PY_VERSION 3.12)
 set(Python_FIND_IMPLEMENTATIONS CPython)
 set(VENV_PATH "${CMAKE_BINARY_DIR}/venv")
 set(DEBUG_BUILD ON)
@@ -24,17 +24,17 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 set(PY_EXT ${PY_EXT_DIR}/${PY_EXT_FILE}.${PY_EXT_EXT})
 set(PY_CFFI ${PY_CFFI_DIR}/PY_CFFI_FILE}.${PY_EXT_EXT})
-if(DEBUG_BUILD)
-  if (WIN32)
+# bulid ext by setup.py
+if (WIN32)
+  if(DEBUG_BUILD)
     set(BUILD_EXT_PYTHON ${VENV_PATH}/Scripts/python_d.exe)
-    set(BUILD_EXT_OPTION -g)
   else()
-    set(BUILD_EXT_PYTHON ${Python_EXECUTABLE})
-    set(BUILD_EXT_OPTION -g)
+    set(BUILD_EXT_PYTHON ${VENV_PATH}/Scripts/python.exe)
   endif()
-else()
-  set(BUILD_EXT_PYTHON ${Python_EXECUTABLE})
   set(BUILD_EXT_OPTION)
+else()
+  set(BUILD_EXT_PYTHON ${VENV_PATH}/bin/python)
+  set(BUILD_EXT_OPTION --warning-as-error)
 endif()
 set(pybcj_sources src/ext/Bra.c src/ext/Bra86.c src/ext/BraIA64.c)
 set(pybcj_ext_src src/ext/_bcjmodule.c)
@@ -67,17 +67,19 @@ add_custom_target(
         COMMAND ${Python_EXECUTABLE} -m venv ${VENV_PATH}
         COMMAND ${PIP_COMMAND} install -r ${CMAKE_BINARY_DIR}/requirements.txt
         COMMAND ${CMAKE_COMMAND} -E touch venv.stamp)
+set(SRC_PATH "${CMAKE_SOURCE_DIR}/src")
 set(VPKG_PATH_A "${VENV_PATH}/lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/")
 set(VPKG_PATH_B "${VENV_PATH}/Lib/site-packages/")
+set(VPKG_PATH_C "${CMAKE_BINARY_DIR}")
 
 # ##################################################################################################
 # For pytest
 file(
-  WRITE ${CMAKE_CURRENT_BINARY_DIR}/pytest_runner.cpp
-  "
+        WRITE ${CMAKE_CURRENT_BINARY_DIR}/pytest_runner.cpp
+        "
 #include <string>
 #include <filesystem>
-#include <Python.h>
+#include <unistd.h>
 int main(int argc, char **argv) {
     std::string args;
     if ( argc > 1) {
@@ -91,20 +93,18 @@ int main(int argc, char **argv) {
         }
         args.append(\"]\");
     }
+    std::filesystem::path src_path = \"${SRC_PATH}\";
     std::filesystem::path vsite_path_a = \"${VPKG_PATH_A}\";
     std::filesystem::path vsite_path_b = \"${VPKG_PATH_B}\";
+    std::filesystem::path vsite_path_c = \"${VPKG_PATH_C}\";
     std::string pycode =
         \"import sys\\n\"
-        \"sys.path.append('src')\\n\"
+        \"sys.path.append('\" + src_path.string() + \"')\\n\"
         \"sys.path.append('\" + vsite_path_a.string() + \"')\\n\"
         \"sys.path.append('\" + vsite_path_b.string() + \"')\\n\"
         \"import pytest\\n\"
         \"pytest.main(\" + args + \")\\n\";
-    wchar_t * program_name = Py_DecodeLocale(argv[0], NULL);
-    Py_SetProgramName(program_name);
-    Py_Initialize();
-    PyRun_SimpleString(&*pycode.begin());
-    Py_Finalize();
+    execl(\"${Python_EXECUTABLE}\", \"${Python_EXECUTABLE}\", \"-c\", pycode.c_str(), (char*)0);
     return 0;
 }")
 add_executable(pytest_runner ${CMAKE_CURRENT_BINARY_DIR}/pytest_runner.cpp)
