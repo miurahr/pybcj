@@ -7,11 +7,13 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+`v1.0.2`_
+=========
+
 Added
 -----
 - Support python 3.12
 - Add cibuildwheel config
-
 
 `v1.0.1`_
 =========
@@ -34,7 +36,7 @@ Changed
 
 Fixed
 -----
-* gitea: issue template
+- gitea: issue template
 
 `v0.6.1`_
 =========
@@ -42,7 +44,7 @@ Fixed
 Changed
 -------
 
-* Publish wheels for python 3.11 beta
+- Publish wheels for python 3.11 beta
 
 `v0.6.0`_
 =========
@@ -131,7 +133,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...HEAD
+.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...HEAD
+.. _v1.0.2: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...v1.0.2
 .. _v1.0.1: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...v1.0.1
 .. _v1.0.0: https://codeberg.org/miurahr/pybcj/compare/v0.6.1...v1.0.0
 .. _v0.6.1: https://codeberg.org/miurahr/pybcj/compare/v0.6.0...v0.6.1
