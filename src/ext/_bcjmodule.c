@@ -29,7 +29,7 @@ enum Method {
     arm,
     armt,
     ppc,
-    sparc,
+    sparc_arch,
     ia64
 };
 
@@ -120,7 +120,7 @@ BCJFilter_do_method(BCJFilter *self) {
         case ppc:
             outLen = PPC_Convert(buf, size, self->ip, self->isEncoder);
             break;
-        case sparc:
+        case sparc_arch:
             outLen = SPARC_Convert(buf, size, self->ip, self->isEncoder);
             break;
         case ia64:
@@ -734,7 +734,7 @@ SparcEncoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
         goto error;
     }
     self->inited = 1;
-    self->method = sparc;
+    self->method = sparc_arch;
     self->readAhead = 4;
     self->isEncoder = True;
     self->remiaining = INT_MAX;
@@ -790,7 +790,7 @@ SparcDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
         goto error;
     }
     self->inited = 1;
-    self->method = sparc;
+    self->method = sparc_arch;
     self->readAhead = 4;
     self->isEncoder = False;
     self->remiaining = size;
