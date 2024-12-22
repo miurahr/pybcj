@@ -1,6 +1,6 @@
 [project]
 name = "pybcj"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 description = "bcj filter library"
 keywords = ["lzma", "bcj"]
 readme = "README.rst"
@@ -9,7 +9,7 @@ authors = [
     {name = "Hiroshi Miura", email = "miurahr@linux.com"},
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
@@ -17,11 +17,11 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
@@ -37,8 +37,7 @@ test = [
     "coverage[toml]>=5.2",
 ]
 check = [
-    "mypy>=0.812",
-    "mypy_extensions>=0.4.3",
+    "mypy>=1.10.0",
     "check-manifest",
     "flake8<5",
     "flake8-black",
@@ -71,7 +70,7 @@ exclude_lines = ["if __name__ == .__main__.:", "pragma: no-cover", "@abstract", 
 
 [tool.black]
 line-length = 125
-target-version = ['py310']
+target-version = ['py312']
 
 [tool.isort]
 known_first_party = ["bcj", "_bcj"]
@@ -104,7 +103,7 @@ archs = ["auto64", "universal2"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{37,38,39,310,311,312}, pypy3, check, mypy
+envlist = py{39,310,311,312,313}, pypy3, check, mypy
 isolated_build=True
 
 [testenv]
