@@ -7,6 +7,22 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+v1.0.3_
+=======
+
+Added
+-----
+- Support python 3.13
+
+Fixed
+-----
+- Allow build on git export source tree
+
+Removed
+-------
+- Support for python 3.8
+
+
 `v1.0.2`_
 =========
 
@@ -133,7 +149,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...HEAD
+.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...HEAD
+.. _v1.0.3: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...v1.0.3
 .. _v1.0.2: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...v1.0.2
 .. _v1.0.1: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...v1.0.1
 .. _v1.0.0: https://codeberg.org/miurahr/pybcj/compare/v0.6.1...v1.0.0
