@@ -39,7 +39,7 @@ test = [
 check = [
     "mypy>=1.10.0",
     "check-manifest",
-    "flake8<5",
+    "flake8<8",
     "flake8-black",
     "flake8-colors",
     "flake8-isort",
