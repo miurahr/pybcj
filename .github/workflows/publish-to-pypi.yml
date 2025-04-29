@@ -28,7 +28,7 @@ jobs:
       CIBW_PRERELEASE_PYTHONS: True
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 20
       - name: Fetch release tags
@@ -55,7 +55,7 @@ jobs:
       #  cp*manylinux1_i686
       #  pp*manylinux1_x86_64
       - name: Upload wheels
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: bcj-files
           path: |
@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 20
       - name: Fetch release tags
@@ -97,7 +97,7 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: bcj-files
           path: |
@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 20
       - name: Fetch release tags
@@ -132,13 +132,13 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
 
       - name: Upload source distribution
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: bcj-files
           path: dist/*.tar.gz
 
       - name: Upload manylinux1_x86_64
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: bcj-files
           path: |
