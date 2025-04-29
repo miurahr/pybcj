@@ -20,6 +20,7 @@ jobs:
     env:
       CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
       CIBW_MANYLINUX_I686_IMAGE: manylinux2014
+      CIBW_ARCHS_LINUX: "native"
       CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
       # Include latest Python beta
       CIBW_PRERELEASE_PYTHONS: True
@@ -43,8 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ matrix.platform }}
-          path: |
-            wheelhouse/*.whl
+          path: wheelhouse/*.whl
 
   build_source_dist:
     name: Build source dist
@@ -81,7 +81,6 @@ jobs:
       - name: download dist artifacts
         uses: actions/download-artifact@v4
         with:
-          name: artifact-*
           path: dist
           merge-multiple: true
       - name: Publish distribution 📦 to Test PyPI
