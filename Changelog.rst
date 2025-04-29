@@ -7,6 +7,18 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+v1.0.4_
+=======
+
+Added
+-----
+- ci: add GitHub Actions as trusted publisher for PyPi
+
+Removed
+-------
+- ci: azure-pipelines
+
+
 v1.0.3_
 =======
 
@@ -149,7 +161,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...HEAD
+.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.4...HEAD
+.. _v1.0.4: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...v1.0.4
 .. _v1.0.3: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...v1.0.3
 .. _v1.0.2: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...v1.0.2
 .. _v1.0.1: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...v1.0.1
