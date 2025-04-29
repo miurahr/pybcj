@@ -18,8 +18,6 @@ jobs:
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest, ubuntu-24.04-arm, windows-11-arm]
     env:
-      CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-      CIBW_MANYLINUX_I686_IMAGE: manylinux2014
       CIBW_ARCHS_LINUX: "native"
       CIBW_ARCHS_MACOS: "x86_64 universal2 arm64"
       # Include latest Python beta
