@@ -49,7 +49,7 @@ jobs:
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
-          name: bcj-files-{{ $matrix.platform }}
+          name: bcj-files-${{ matrix.platform }}
           path: |
             wheelhouse/*.whl
 
