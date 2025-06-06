@@ -50,7 +50,7 @@ check = [
 ]
 
 [project.urls]
-Source = "https://codeberg.org/miurahr/pybcj"
+Source = "https://github.com/miurahr/pybcj"
 
 [build-system]
 requires = ["setuptools>=58", "wheel", "setuptools_scm[toml]>=6.0.1"]
@@ -103,7 +103,7 @@ archs = ["auto64", "universal2"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{39,310,311,312,313}, pypy3, check, mypy
+envlist = py{39,310,311,312,313,314}, pypy3, check, mypy
 isolated_build=True
 
 [testenv]
