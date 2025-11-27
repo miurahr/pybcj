@@ -7,6 +7,5 @@ recursive-include src *.py
 recursive-include src *.c
 recursive-include src *.h
 recursive-include src py.typed
-recursive-include tests *.py
-recursive-include tests *.zip
+prune tests
 prune issue_template
