@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
-v1.0.5_
+v1.0.6_
 =======
 
 Changed
@@ -165,8 +165,8 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.5...HEAD
-.. _v1.0.5: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...v1.0.5
+.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.6...HEAD
+.. _v1.0.6: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...v1.0.6
 .. _v1.0.3: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...v1.0.3
 .. _v1.0.2: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...v1.0.2
 .. _v1.0.1: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...v1.0.1
