@@ -6,10 +6,6 @@ on:
       - main
       - releases/*
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
 
 jobs:
   build:
@@ -22,7 +18,7 @@ jobs:
             "3.11",
             "3.12",
             "3.13",
-            "3.14t"
+            "3.14"
             "pypy-3.10",
         ]
         include:
@@ -44,7 +40,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
       - name: Install dependencies
         run: |
           pip install -U pip tox wheel setuptools setuptools_scm[toml]
