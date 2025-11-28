@@ -6,6 +6,10 @@ on:
       - main
       - releases/*
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   build:
@@ -18,12 +22,12 @@ jobs:
             "3.11",
             "3.12",
             "3.13",
-            "3.14"
+            "3.14",
             "pypy-3.10",
         ]
         include:
           - os: macos-latest
-            python-version: "3.13"
+            python-version: "3.14"
           - os: ubuntu-24.04-arm
             python-version: "3.13"
           - os: windows-11-arm
