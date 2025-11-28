@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+Added
+-----
+- Support for python 3.14
+
+Changed
+-------
+- ci: fix test and release workflows
+
 v1.0.6_
 =======
 
