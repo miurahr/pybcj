@@ -1,6 +1,6 @@
 [project]
 name = "pybcj"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 description = "bcj filter library"
 keywords = ["lzma", "bcj"]
 readme = "README.rst"
@@ -17,11 +17,11 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
@@ -50,7 +50,10 @@ check = [
 ]
 
 [project.urls]
+Homepage = "https://pypi.org/project/pybcj"
+"Bug Tracker" = "https://github.com/miurahr/pybcj/issues"
 Source = "https://github.com/miurahr/pybcj"
+Changelog = "https://github.com/miurahr/pybcj/blob/main/Changelog.rst"
 
 [build-system]
 requires = ["setuptools>=58", "wheel", "setuptools_scm[toml]>=6.0.1"]
@@ -103,7 +106,7 @@ archs = ["auto64", "universal2"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{39,310,311,312,313,314}, pypy3, check, mypy
+envlist = py{310,311,312,313,314}, pypy3, check, mypy
 isolated_build=True
 
 [testenv]
