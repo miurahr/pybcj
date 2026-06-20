@@ -296,9 +296,9 @@ BCJEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 BCJDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:BCJDecoder.__init__", kwlist,
+                                     "K:BCJDecoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -312,7 +312,11 @@ BCJDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = x86;
     self->readAhead = 5;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
@@ -392,9 +396,9 @@ ARMEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 ARMDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:ARMDecoder.__init__", kwlist,
+                                     "K:ARMDecoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -408,7 +412,11 @@ ARMDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = arm;
     self->readAhead = 4;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
@@ -488,9 +496,9 @@ ARMTEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 ARMTDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:ARMTDecoder.__init__", kwlist,
+                                     "K:ARMTDecoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -504,7 +512,11 @@ ARMTDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = armt;
     self->readAhead = 4;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
@@ -584,9 +596,9 @@ PPCEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 PPCDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:PPCDecoder.__init__", kwlist,
+                                     "K:PPCDecoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -600,7 +612,11 @@ PPCDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = ppc;
     self->readAhead = 4;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
@@ -680,9 +696,9 @@ IA64Encoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 IA64Decoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:IA64Decoder.__init__", kwlist,
+                                     "K:IA64Decoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -696,7 +712,11 @@ IA64Decoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = ia64;
     self->readAhead = 4;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
@@ -777,9 +797,9 @@ SparcEncoder_flush(BCJFilter *self, PyObject *args, PyObject *kwargs) {
 static int
 SparcDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     static char *kwlist[] = {"size", NULL};
-    int size;
+    unsigned long long size;
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-                                     "i:SparcDecoder.__init__", kwlist,
+                                     "K:SparcDecoder.__init__", kwlist,
                                      &size)) {
         return -1;
     }
@@ -793,7 +813,11 @@ SparcDecoder_init(BCJFilter *self, PyObject *args, PyObject *kwargs) {
     self->method = sparc_arch;
     self->readAhead = 4;
     self->isEncoder = False;
-    self->remiaining = size;
+    self->remiaining = (size_t)size;
+    if ((unsigned long long)self->remiaining != size) {
+        PyErr_SetString(PyExc_OverflowError, "size is too large for size_t");
+        goto error;
+    }
     self->state = 0;
     return 0;
 
