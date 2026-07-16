@@ -7,6 +7,12 @@ All notable changes to this project will be documented in this file.
 `Unreleased`_
 =============
 
+v1.0.8_
+=======
+
+- BCJ decoder supports larger size (>2GB) (#26)
+- Update license specification (#25)
+
 v1.0.7_
 =======
 
@@ -176,10 +182,11 @@ v0.1.0
 - First import.
 
 
-.. _Unreleased: https://codeberg.org/miurahr/pybcj/compare/v1.0.7...HEAD
-.. _v1.0.7: https://codeberg.org/miurahr/pybcj/compare/v1.0.6...v1.0.7
-.. _v1.0.6: https://codeberg.org/miurahr/pybcj/compare/v1.0.3...v1.0.6
-.. _v1.0.3: https://codeberg.org/miurahr/pybcj/compare/v1.0.2...v1.0.3
+.. _Unreleased: https://github.com/miurahr/pybcj/compare/v1.0.8...HEAD
+.. _v1.0.8: https://github.com/miurahr/pybcj/compare/v1.0.7...v1.0.8
+.. _v1.0.7: https://github.com/miurahr/pybcj/compare/v1.0.6...v1.0.7
+.. _v1.0.6: https://github.com/miurahr/pybcj/compare/v1.0.3...v1.0.6
+.. _v1.0.3: https://github.com/miurahr/pybcj/compare/v1.0.2...v1.0.3
 .. _v1.0.2: https://codeberg.org/miurahr/pybcj/compare/v1.0.1...v1.0.2
 .. _v1.0.1: https://codeberg.org/miurahr/pybcj/compare/v1.0.0...v1.0.1
 .. _v1.0.0: https://codeberg.org/miurahr/pybcj/compare/v0.6.1...v1.0.0
